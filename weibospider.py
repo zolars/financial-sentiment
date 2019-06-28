@@ -15,12 +15,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 class Weibospider():
-    def __init__(self, query_val):
+    def __init__(self, query_val, log):
 
         # link and user-agent setting
         # ?type=wb&queryVal={}&containerid=100103type=2%26q%3D{}&page={}
         self._url_template = "https://m.weibo.cn/api/container/getIndex?type=wb&queryVal={}&containerid=100103type=2%26q%3D{}&page={}"
         self._query_val = query_val
+        self._log = log
 
         self.user_agents = ['Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
                             'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
@@ -52,8 +53,6 @@ class Weibospider():
             charset='utf8',
         )
         self._cur = self._db.cursor()
-        self._log = open('./log/weibospider{:_%m_%d_%H_%M}.log'.format(
-            datetime.datetime.now()), 'a', encoding='utf-8')
 
     def __del__(self):
         self._db.close()
@@ -120,7 +119,7 @@ class Weibospider():
 
             # save to mysql
             try:
-                sql = 'insert ignore into result (mid, text, time, userid, username, reposts_count, comments_count, attitudes_count) values (%s,%s,%s,%s,%s,%s,%s,%s);'
+                sql = 'insert into result (mid, text, time, userid, username, reposts_count, comments_count, attitudes_count) values (%s,%s,%s,%s,%s,%s,%s,%s);'
                 effect_rows += self._cur.execute(sql, result)
                 self._db.commit()
             except Exception as e:
@@ -176,17 +175,20 @@ class Weibospider():
 def demo(target):
     print('Spider beginning...')
 
+    log = open('./log/weibospider{:_%m_%d_%H_%M}.log'.format(
+        datetime.datetime.now()), 'a', encoding='utf-8')
+
     executor = ThreadPoolExecutor(max_workers=8)
 
     while True:
         for i in range(180, 0, -20):
 
-            spider = Weibospider(target)
+            spider = Weibospider(target, log)
             executor.submit(spider.catch_pages, i, i + 5, 0)
             del spider
             time.sleep(3)
 
-            spider = Weibospider(target)
+            spider = Weibospider(target, log)
             executor.submit(spider.catch_pages, i + 5, i + 10, 0)
             del spider
             time.sleep(10)
@@ -194,7 +196,9 @@ def demo(target):
 
 def stable(target):
     print('Spider beginning...')
-    weibospiderBig = Weibospider(target)
+    log = open('./log/weibospider{:_%m_%d_%H_%M}.log'.format(
+        datetime.datetime.now()), 'a', encoding='utf-8')
+    weibospiderBig = Weibospider(target, log)
     while True:
         weibospiderBig.catch_pages(0, 5, 0)
 
