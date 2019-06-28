@@ -1,5 +1,31 @@
 # finanical-sentiment
+
 Cooperation project with the University of New South Wales aimed to analyse influence between social sentiment and financial tendency. 
+
+## Usage
+
+1. You need to install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) on your computer.
+    ```
+    $ conda -V
+    conda 4.6.xx
+    ```
+
+2. Create the environment.
+    ```
+    $ cd finanical-sentiment
+    $ conda create -n finance python=3.6
+    $ conda activate finance
+    $ python -V
+    Python 3.6.8 :: Anaconda, Inc. 
+    ```
+
+3. Install dependencies.
+    ```
+    $ conda activate finance
+    $ pip install -r requirements.txt
+    ```
+
+4. Run the app
 
 ## Requirements
 
