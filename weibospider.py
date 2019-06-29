@@ -7,15 +7,13 @@ import time
 import emoji
 import requests
 import random
-import pymysql
 import chartify
 import datetime
 from database import MySQL
 from tqdm import tqdm
-from concurrent.futures import ThreadPoolExecutor
 
 
-class Weibospider():
+class WeiboSpider():
     def __init__(self, query_val, log):
 
         # link and user-agent setting
@@ -163,41 +161,3 @@ class Weibospider():
                             print("Log ERROR: \t", e)
                             page_id += 1
                             pbar.update(1)
-
-
-def demo(target):
-    print('Spider beginning...')
-
-    log = open('./log/weibospider{:_%m_%d_%H_%M}.log'.format(
-        datetime.datetime.now()), 'a', encoding='utf-8')
-
-    executor = ThreadPoolExecutor(max_workers=8)
-
-    while True:
-        for i in range(0, 180, 20):
-
-            spider1 = Weibospider(target, log)
-            executor.submit(spider1.catch_pages, 0, 5, 0)
-            time.sleep(3)
-
-            spider2 = Weibospider(target, log)
-            executor.submit(spider2.catch_pages, i, i + 5, 0)
-            time.sleep(3)
-
-            spider3 = Weibospider(target, log)
-            executor.submit(spider3.catch_pages, i + 5, i + 10, 0)
-            time.sleep(15)
-
-
-def stable(target):
-    print('Spider beginning...')
-    log = open('./log/weibospider{:_%m_%d_%H_%M}.log'.format(
-        datetime.datetime.now()), 'a', encoding='utf-8')
-    weibospiderBig = Weibospider(target, log)
-    while True:
-        weibospiderBig.catch_pages(0, 5, 0)
-
-
-if __name__ == '__main__':
-    target = '李鑫一'
-    demo(target)
