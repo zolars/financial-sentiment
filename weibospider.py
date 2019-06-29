@@ -10,6 +10,7 @@ import random
 import pymysql
 import chartify
 import datetime
+from database import MySQL
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 
@@ -43,19 +44,10 @@ class Weibospider():
                             'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0; BIDUBrowser 2.x)',
                             'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.11 TaoBrowser/3.0 Safari/536.11']
 
-        # Connect to MySQL
-        self._db = pymysql.connect(
-            host='localhost',  # mysql server address
-            port=3306,  # port num
-            user='root',  # username
-            passwd='root',  # password
-            db='weibo',
-            charset='utf8',
-        )
-        self._cur = self._db.cursor()
+        self._db = MySQL()
 
     def __del__(self):
-        self._db.close()
+        del(self._db)
 
     def clean_text(self, text):
         """clean tags or emoji of texts"""
@@ -107,6 +99,7 @@ class Weibospider():
             time = "{:%Y-%m-%d %H:%M}".format(sendtime - delta)
             result = [
                 mblog['id'],  # weibo id
+                "weibo",  # type
                 self.clean_text(mblog['text']).strip(
                     '\n').encode("utf8"),  # text
                 time,  # time of posts
@@ -119,9 +112,9 @@ class Weibospider():
 
             # save to mysql
             try:
-                sql = 'insert into result (mid, text, time, userid, username, reposts_count, comments_count, attitudes_count) values (%s,%s,%s,%s,%s,%s,%s,%s);'
-                effect_rows += self._cur.execute(sql, result)
-                self._db.commit()
+                sql = 'insert ignore into result (mid, type, text, time, userid, username, reposts_count, comments_count, attitudes_count) values (%s,%s,%s,%s,%s,%s,%s,%s,%s);'
+                effect_rows += self._db.insert(sql, result)
+
             except Exception as e:
                 print("MySQL ERROR: \t", e)
         try:
@@ -145,7 +138,7 @@ class Weibospider():
         page_id = start_page_num
         effect_rows = 0
         error_list = []
-        with tqdm(total=end_page_num - start_page_num + 1) as pbar:
+        with tqdm(total=end_page_num - start_page_num) as pbar:
             while page_id <= end_page_num:
                 try:
                     effect_rows += self.catch_data(page_id)
@@ -168,8 +161,8 @@ class Weibospider():
                                         page_id)))
                         except Exception as e:
                             print("Log ERROR: \t", e)
-                        page_id += 1
-                        pbar.update(1)
+                            page_id += 1
+                            pbar.update(1)
 
 
 def demo(target):
@@ -181,17 +174,19 @@ def demo(target):
     executor = ThreadPoolExecutor(max_workers=8)
 
     while True:
-        for i in range(180, 0, -20):
+        for i in range(0, 180, 20):
 
-            spider = Weibospider(target, log)
-            executor.submit(spider.catch_pages, i, i + 5, 0)
-            del spider
+            spider1 = Weibospider(target, log)
+            executor.submit(spider1.catch_pages, 0, 5, 0)
             time.sleep(3)
 
-            spider = Weibospider(target, log)
-            executor.submit(spider.catch_pages, i + 5, i + 10, 0)
-            del spider
-            time.sleep(10)
+            spider2 = Weibospider(target, log)
+            executor.submit(spider2.catch_pages, i, i + 5, 0)
+            time.sleep(3)
+
+            spider3 = Weibospider(target, log)
+            executor.submit(spider3.catch_pages, i + 5, i + 10, 0)
+            time.sleep(15)
 
 
 def stable(target):

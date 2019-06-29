@@ -26,6 +26,10 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```
 
 4. Run the app
+    ```
+    $ set http_proxy=http://127.0.0.1:1080
+    $ set https_proxy=http://127.0.0.1:1080
+    ```
 
 ## Requirements
 

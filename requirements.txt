@@ -3,3 +3,4 @@ pymysql
 tqdm
 emoji
 chartify
+twitterscraper==0.9.3
