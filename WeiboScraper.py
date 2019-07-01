@@ -7,13 +7,40 @@ import time
 import emoji
 import requests
 import random
+import pymysql
 import chartify
-import datetime
-from database import MySQL
+import datetime as dt
 from tqdm import tqdm
 
 
-class WeiboSpider():
+class MySQL:
+    def __init__(self):
+        # Connect to MySQL
+        self._conn = pymysql.connect(
+            host='localhost',  # mysql server address
+            port=3306,  # port num
+            user='root',  # username
+            passwd='root',  # password
+            db='finance',
+            charset='utf8',
+        )
+        self._cur = self._conn.cursor()
+
+    def __del__(self):
+        self._conn.close()
+
+    def insert(self, sql, data):
+        effect_rows = self._cur.execute(sql, data)
+        self._conn.commit()
+        return effect_rows
+
+    def insertmany(self, sql, datas):
+        effect_rows = self._cur.executemany(sql, datas)
+        self._conn.commit()
+        return effect_rows
+
+
+class WeiboScraper():
     def __init__(self, query_val, log):
 
         # link and user-agent setting
@@ -72,27 +99,28 @@ class WeiboSpider():
 
         card_group = json.loads(resp.text)['data']['cards'][0]['card_group']
 
+        results = 0
         effect_rows = 0
         for card in card_group:
 
             mblog = card['mblog']
 
             time = mblog['created_at']
-            sendtime = datetime.datetime.now()
-            delta = datetime.timedelta(seconds=0)
+            sendtime = dt.datetime.now()
+            delta = dt.timedelta(seconds=0)
             if '小时' in time:
-                delta = datetime.timedelta(hours=int(time.replace('小时前', '')))
+                delta = dt.timedelta(hours=int(time.replace('小时前', '')))
             elif '分钟' in time:
-                delta = datetime.timedelta(
+                delta = dt.timedelta(
                     minutes=int(time.replace('分钟前', '')))
             elif '刚刚' in time:
                 pass
             else:
                 if len(time) is 5:
-                    sendtime = datetime.datetime.strptime(
+                    sendtime = dt.datetime.strptime(
                         "{:%Y-}".format(sendtime) + time, '%Y-%m-%d')
                 else:
-                    sendtime = datetime.datetime.strptime(time, '%Y-%m-%d')
+                    sendtime = dt.datetime.strptime(time, '%Y-%m-%d')
 
             time = "{:%Y-%m-%d %H:%M}".format(sendtime - delta)
             result = [
@@ -107,6 +135,7 @@ class WeiboSpider():
                 mblog['comments_count'],  # comments num
                 mblog['attitudes_count'],  # attitudes num
             ]
+            results += 1
 
             # save to mysql
             try:
@@ -114,11 +143,12 @@ class WeiboSpider():
                 effect_rows += self._db.insert(sql, result)
 
             except Exception as e:
-                print("MySQL ERROR: \t", e)
+                print("\nMySQL ERROR: \t", e)
         try:
             self._log.write(
-                "{:%Y-%m-%d %H:%M:%S} Success: Update {} date at page {}.\tURL: {}\n".format(
-                    datetime.datetime.now(),
+                "{:%Y-%m-%d %H:%M:%S} Success: Catch {:2} data, update {:2} date at page {}.\tURL: {}\n".format(
+                    dt.datetime.now(),
+                    results,
                     effect_rows,
                     page_id,
                     self._url_template.format(
@@ -126,17 +156,17 @@ class WeiboSpider():
                         self._query_val,
                         page_id)))
         except Exception as e:
-            print("Log ERROR: \t", e)
+            print("\nLog ERROR: \t", e)
 
         return effect_rows
 
-    def catch_pages(self, start_page_num, end_page_num, delay):
+    def catch_pages(self, start_page_num, end_page_num, delay, retry=5):
         """Catch data by keywords and pages"""
 
         page_id = start_page_num
         effect_rows = 0
         error_list = []
-        with tqdm(total=end_page_num - start_page_num) as pbar:
+        with tqdm(total=end_page_num - start_page_num + 1) as pbar:
             while page_id <= end_page_num:
                 try:
                     effect_rows += self.catch_data(page_id)
@@ -147,17 +177,32 @@ class WeiboSpider():
                     if page_id not in error_list:
                         error_list.append(page_id)
                         time.sleep(delay)
+                        # catch_pages(page_id,)
                     else:
                         try:
                             self._log.write(
-                                "{:%Y-%m-%d %H:%M:%S} Error: Data not found at page {}.\tURL: {}\n".format(
-                                    datetime.datetime.now(),
+                                "{:%Y-%m-%d %H:%M:%S} Error: Data not found at page {:2}. Check log. \tURL: {}\n".format(
+                                    dt.datetime.now(),
                                     page_id,
                                     self._url_template.format(
                                         self._query_val,
                                         self._query_val,
                                         page_id)))
                         except Exception as e:
-                            print("Log ERROR: \t", e)
+                            print("\nLog ERROR: \t", e)
                             page_id += 1
                             pbar.update(1)
+
+
+def stable(query):
+    print('Spider beginning...')
+    log = open('./log/WeiboScraper{:_%m_%d_%H_%M}.log'.format(
+        dt.datetime.now()), 'a', encoding='utf-8')
+    weiboScraperBig = WeiboScraper(query, log)
+    # while True:
+    weiboScraperBig.catch_pages(1, 2, 0)
+
+
+if __name__ == '__main__':
+    query = 'Trump'
+    stable(query)
