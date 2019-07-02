@@ -122,7 +122,7 @@ class WeiboScraper():
                 else:
                     sendtime = dt.datetime.strptime(time, '%Y-%m-%d')
 
-            time = "{:%Y-%m-%d %H:%M}".format(sendtime - delta)
+            time = "{:%Y-%m-%d %H:%M}:00".format(sendtime - delta)
             result = [
                 mblog['id'],  # weibo id
                 "weibo",  # type

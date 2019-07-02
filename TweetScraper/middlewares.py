@@ -4,4 +4,4 @@ class ProxyMiddleware(object):
         if request.url.startswith("http://"):
             request.meta['proxy'] = "http://127.0.0.1:1080"
         elif request.url.startswith("https://"):
-            request.meta['proxy'] = "http://127.0.0.1:1080"
+            request.meta['proxy'] = "https://127.0.0.1:1080"
