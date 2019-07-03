@@ -9,7 +9,7 @@ LOG_LEVEL = 'INFO'
 DOWNLOAD_HANDLERS = {'s3': None, }
 
 # Addition timeout
-CLOSESPIDER_TIMEOUT = 30
+# CLOSESPIDER_TIMEOUT = 30
 
 SPIDER_MODULES = ['TweetScraper.spiders']
 NEWSPIDER_MODULE = 'TweetScraper.spiders'

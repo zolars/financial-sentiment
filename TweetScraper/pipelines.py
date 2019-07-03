@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
+import os
+import json
+import emoji
+
+# for spider
 from scrapy.exceptions import DropItem
 from scrapy.conf import settings
 import logging
-import emoji
-import json
-import os
 
 # for mysql
 import pymysql
+
+# for sentiment analysis
+from sentiment_analyse import sentiment_analyse as sa
 
 from TweetScraper.items import Tweet, User
 from TweetScraper.utils import mkdirs
@@ -68,9 +73,10 @@ class SavetoMySQLPipeline(object):
         nbr_retweet = item['nbr_retweet']
         nbr_favorite = item['nbr_favorite']
         nbr_reply = item['nbr_reply']
+        sentiment = sa(text) * int(nbr_favorite)
 
-        insert_query = 'INSERT IGNORE INTO result (mid, type, text, time, userid, username, reposts_count, comments_count, attitudes_count)'
-        insert_query += ' VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);'
+        insert_query = 'INSERT IGNORE INTO result (mid, type, text, time, userid, username, reposts_count, comments_count, attitudes_count, sentiment)'
+        insert_query += ' VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
 
         try:
             self.cursor.execute(insert_query, (
@@ -82,20 +88,10 @@ class SavetoMySQLPipeline(object):
                 emoji.demojize(username),
                 nbr_retweet,
                 nbr_reply,
-                nbr_favorite
+                nbr_favorite,
+                sentiment
             ))
         except Exception as err:
-            logger.info((
-                ID,
-                "tweet",
-                emoji.demojize(text).strip('\n'),
-                datetime,
-                user_id,
-                emoji.demojize(username),
-                nbr_retweet,
-                nbr_reply,
-                nbr_favorite
-            ))
             logger.info(err)
         else:
             self.conn.commit()

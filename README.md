@@ -23,6 +23,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```
     $ conda activate finance
     $ pip install -r requirements.txt
+    $ python -m textblob.download_corpora
     ```
 
 4. Run the app

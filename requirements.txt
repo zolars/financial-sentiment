@@ -2,5 +2,7 @@ requests
 pymysql
 tqdm
 emoji
-chartify
 scrapy
+pandas_datareader
+pyecharts
+textblob

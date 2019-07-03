@@ -6,7 +6,7 @@ from WeiboScraper import WeiboScraper
 from concurrent.futures import ThreadPoolExecutor
 
 
-def engine(query):
+def weibo_engine(query):
     print('Scraper beginning...')
 
     log = open('./log/WeiboScraper{:_%m_%d_%H_%M}.log'.format(
@@ -32,5 +32,4 @@ def engine(query):
 
 
 if __name__ == '__main__':
-    query = 'Tencent'
-    engine(query)
+    weibo_engine("whatsapp")
