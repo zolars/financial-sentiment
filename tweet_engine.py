@@ -15,7 +15,7 @@ from multiprocessing import Process, Queue
 def catch_pages_history(query):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
     runner = CrawlerRunner(get_project_settings())
-    runner.crawl(TweetScraper, query=query, top_tweet=True)
+    runner.crawl(TweetScraper, query=query, lang='en', top_tweet=True)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
@@ -25,8 +25,8 @@ def catch_pages_realtime(query):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
 
     runner = CrawlerRunner(
-        get_project_settings().set("CLOSESPIDER_TIMEOUT", 60))
-    runner.crawl(TweetScraper, query=query, top_tweet=False)
+        get_project_settings().set("CLOSESPIDER_TIMEOUT", 30))
+    runner.crawl(TweetScraper, query=query, lang='en', top_tweet=False)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
@@ -52,4 +52,5 @@ def tweet_engine(query):
 
 
 if __name__ == "__main__":
-    tweet_engine('Tesla')
+    catch_pages_history('"NVIDIA"')
+    # tweet_engine('NVIDIA')

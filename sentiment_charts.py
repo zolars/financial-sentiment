@@ -52,4 +52,4 @@ def sentiment_charts(table):
 
 
 if __name__ == "__main__":
-    startdate, enddate = sentiment_charts("Tesla")
+    startdate, enddate = sentiment_charts("NVIDIA")

@@ -1,6 +1,5 @@
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
-from scrapy.conf import settings
 from scrapy import http
 from scrapy.shell import inspect_response  # for debugging
 import re
@@ -26,11 +25,12 @@ class TweetScraper(CrawlSpider):
     def __init__(self, query='', lang='', crawl_user=False, top_tweet=False):
 
         self.query = query
-        settings.set('MYSQL_TABLE_NAME', query)
-        self.url = "https://twitter.com/i/search/timeline?l={}".format(lang)
-
+        self.url = "https://twitter.com/i/search/timeline?l={}".format(
+            lang)
         if not top_tweet:
-            self.url = self.url + "&f=tweets"
+            self.url = self.url + "&qf=off" + "&f=tweets"
+        else:
+            self.url = self.url + "&qf=on"
 
         self.url = self.url + "&q=%s&src=typed&max_position=%s"
 

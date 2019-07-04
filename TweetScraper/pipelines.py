@@ -5,7 +5,7 @@ import emoji
 
 # for spider
 from scrapy.exceptions import DropItem
-from scrapy.conf import settings
+from scrapy.utils.project import get_project_settings
 import logging
 
 # for mysql
@@ -44,6 +44,7 @@ class SavetoMySQLPipeline(object):
     ''' pipeline that save data to mysql '''
 
     def __init__(self):
+        settings = get_project_settings()
         # connect to mysql server
         self._table = settings['MYSQL_TABLE_NAME']
         db = settings['MYSQL_DB_NAME']
@@ -155,6 +156,7 @@ class SaveToFilePipeline(object):
     ''' pipeline that save data to disk '''
 
     def __init__(self):
+        settings = get_project_settings()
         self.saveTweetPath = settings['SAVE_TWEET_PATH']
         self.saveUserPath = settings['SAVE_USER_PATH']
         mkdirs(self.saveTweetPath)  # ensure the path exists
