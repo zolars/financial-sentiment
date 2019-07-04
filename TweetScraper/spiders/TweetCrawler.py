@@ -26,6 +26,7 @@ class TweetScraper(CrawlSpider):
     def __init__(self, query='', lang='', crawl_user=False, top_tweet=False):
 
         self.query = query
+        settings.set('MYSQL_TABLE_NAME', query)
         self.url = "https://twitter.com/i/search/timeline?l={}".format(lang)
 
         if not top_tweet:

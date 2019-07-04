@@ -12,8 +12,27 @@ import datetime as dt
 from tqdm import tqdm
 
 
+"""
++-----------------+------------+------+-----+---------+-------+
+| Field           | Type       | Null | Key | Default | Extra |
++-----------------+------------+------+-----+---------+-------+
+| mid             | bigint(20) | NO   | PRI | NULL    |       |
+| type            | mediumtext | NO   |     | NULL    |       |
+| text            | text       | YES  |     | NULL    |       |
+| time            | text       | YES  |     | NULL    |       |
+| userid          | text       | YES  |     | NULL    |       |
+| username        | text       | YES  |     | NULL    |       |
+| reposts_count   | int(11)    | YES  |     | NULL    |       |
+| comments_count  | int(11)    | YES  |     | NULL    |       |
+| attitudes_count | int(11)    | YES  |     | NULL    |       |
+| sentiment       | float      | YES  |     | NULL    |       |
++-----------------+------------+------+-----+---------+-------+
+"""
+
+
 class MySQL:
-    def __init__(self):
+    def __init__(self, table):
+
         # Connect to MySQL
         self._conn = pymysql.connect(
             host='localhost',  # mysql server address
@@ -21,9 +40,25 @@ class MySQL:
             user='root',  # username
             passwd='root',  # password
             db='finance',
-            charset='utf8',
+            charset='utf8mb4',
         )
         self._cur = self._conn.cursor()
+        sql = """
+            CREATE TABLE IF NOT EXISTS {} (
+                mid BIGINT NOT NULL, 
+                type VARCHAR(255) NOT NULL,
+                text VARCHAR(255),
+                time VARCHAR(255),
+                userid VARCHAR(255),
+                username VARCHAR(255),
+                reposts_count VARCHAR(255),  
+                comments_count VARCHAR(255),
+                attitudes_count VARCHAR(255),
+                sentiment FLOAT,
+                PRIMARY KEY ( mid )
+            ) DEFAULT CHARSET=utf8mb4;      
+            """.format(table)
+        self._cur.execute(sql)
 
     def __del__(self):
         self._conn.close()
@@ -68,7 +103,8 @@ class WeiboScraper():
                             'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0; BIDUBrowser 2.x)',
                             'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.11 TaoBrowser/3.0 Safari/536.11']
 
-        self._db = MySQL()
+        self._db = MySQL(query)
+        self._table = query
 
     def __del__(self):
         del(self._db)
@@ -138,7 +174,8 @@ class WeiboScraper():
 
             # save to mysql
             try:
-                sql = 'insert ignore into result (mid, type, text, time, userid, username, reposts_count, comments_count, attitudes_count) values (%s,%s,%s,%s,%s,%s,%s,%s,%s);'
+                sql = 'insert ignore into ' + self._table + \
+                    ' (mid, type, text, time, userid, username, reposts_count, comments_count, attitudes_count) values (%s,%s,%s,%s,%s,%s,%s,%s,%s);'
                 effect_rows += self._db.insert(sql, result)
 
             except Exception as e:
@@ -203,5 +240,5 @@ def stable(query):
 
 
 if __name__ == '__main__':
-    query = 'Trump'
+    query = '特斯拉'
     stable(query)

@@ -1,4 +1,3 @@
-# %%
 import datetime as dt
 import pandas as pd
 import numpy as np
@@ -51,5 +50,3 @@ if __name__ == "__main__":
     startdate = dt.datetime(2019, 5, 1)
     enddate = dt.datetime.now()
     stock_charts("TSLA", startdate, enddate)
-
-# %%
