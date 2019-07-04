@@ -1,7 +1,8 @@
+# %%
 import datetime as dt
 import pandas as pd
 import numpy as np
-import pandas_datareader as pdr
+from tiingo import TiingoClient
 from pyecharts import options as opts
 from pyecharts.charts import Kline
 
@@ -20,21 +21,35 @@ def kline_datazoom_slider_position(index, data) -> Kline:
                 ),
             ),
             datazoom_opts=[opts.DataZoomOpts(pos_bottom="-2%")],
-            title_opts=opts.TitleOpts(title="Kline-DataZoom-slider-Position"),
+            title_opts=opts.TitleOpts(title="Stock K-line Graph"),
         )
     )
     return c
 
 
-def stock_engine(query):
-    df = pdr.get_data_tiingo(query,
-                             api_key='138fd2efede60c466126add93ebf585fc5492f75')
+def stock_charts(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
+
+    config = {'api_key': '138fd2efede60c466126add93ebf585fc5492f75'}
+    client = TiingoClient(config)
+
+    df = client.get_dataframe(query,
+                              frequency='daily',
+                              startDate='{:%Y-%m-%d}'.format(startdate),
+                              endDate='{:%Y-%m-%d}'.format(enddate))
     df = df.loc[:, ['open', 'close', 'low', 'high']]
+
     data = np.array(df).tolist()
     index = df.index.tolist()
 
-    kline_datazoom_slider_position(index, data).render()
+    print(data)
+    print(index)
+
+    kline_datazoom_slider_position(index, data).render("chart_stock.html")
 
 
 if __name__ == "__main__":
-    stock_engine("FB")
+    startdate = dt.datetime(2019, 5, 1)
+    enddate = dt.datetime.now()
+    stock_charts("TSLA", startdate, enddate)
+
+# %%

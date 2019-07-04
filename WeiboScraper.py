@@ -8,7 +8,6 @@ import emoji
 import requests
 import random
 import pymysql
-import chartify
 import datetime as dt
 from tqdm import tqdm
 

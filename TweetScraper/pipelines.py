@@ -12,7 +12,7 @@ import logging
 import pymysql
 
 # for sentiment analysis
-from sentiment_analyse import sentiment_analyse as sa
+from textblob import TextBlob
 
 from TweetScraper.items import Tweet, User
 from TweetScraper.utils import mkdirs
@@ -73,10 +73,17 @@ class SavetoMySQLPipeline(object):
         nbr_retweet = item['nbr_retweet']
         nbr_favorite = item['nbr_favorite']
         nbr_reply = item['nbr_reply']
-        sentiment = sa(text) * int(nbr_favorite)
 
-        insert_query = 'INSERT IGNORE INTO result (mid, type, text, time, userid, username, reposts_count, comments_count, attitudes_count, sentiment)'
-        insert_query += ' VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
+        # SENTIMENT ANALYSIS
+        try:
+            blob = TextBlob(text)
+            sentiment = blob.sentiment.polarity * \
+                blob.sentiment.subjectivity * int(nbr_favorite)
+        except Exception as err:
+            print(err)
+
+        insert_query = 'INSERT IGNORE INTO result (mid, type, text, time, userid, username, reposts_count, comments_count, attitudes_count, sentiment) '
+        insert_query += 'VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
 
         try:
             self.cursor.execute(insert_query, (

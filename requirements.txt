@@ -3,6 +3,6 @@ pymysql
 tqdm
 emoji
 scrapy
-pandas_datareader
+tiingo[pandas]
 pyecharts
 textblob

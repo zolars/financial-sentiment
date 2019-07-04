@@ -32,4 +32,4 @@ def weibo_engine(query):
 
 
 if __name__ == '__main__':
-    weibo_engine("whatsapp")
+    weibo_engine("Tesla")
