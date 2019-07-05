@@ -55,7 +55,7 @@ def sentiment_charts(table):
     df = df.resample('w').mean()
     data = np.around(np.array(df), decimals=2).tolist()
     index = df.index.tolist()
-    line_smooth(index, data).render(table + "_chart_sentiment.html")
+    line_smooth(index, data).render("html/" + table + "_chart_sentiment.html")
     return df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
 
 
