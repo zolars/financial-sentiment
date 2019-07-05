@@ -35,7 +35,15 @@ def line_smooth(index, data) -> Line:
         Line()
         .add_xaxis(index)
         .add_yaxis("Sentiment value", data, is_smooth=True)
-        .set_global_opts(title_opts=opts.TitleOpts(title="Sentiment Analysis"))
+        .set_global_opts(
+            xaxis_opts=opts.AxisOpts(is_scale=True),
+            yaxis_opts=opts.AxisOpts(
+                is_scale=True,
+                splitarea_opts=opts.SplitAreaOpts(
+                    is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1))),
+            datazoom_opts=[opts.DataZoomOpts(pos_bottom="-2%")],
+            title_opts=opts.TitleOpts(title="Sentiment Analysis")
+        )
     )
     return c
 
@@ -44,11 +52,11 @@ def sentiment_charts(table):
     df = MySQL(table).search()
     df['time'] = pd.to_datetime(df['time'])
     df = df.set_index('time')
-    df = df.resample('B').mean()
+    df = df.resample('w').mean()
     data = np.around(np.array(df), decimals=2).tolist()
     index = df.index.tolist()
-    line_smooth(index, data).render("chart_sentiment.html")
-    return df.index[-1], df.index[0]
+    line_smooth(index, data).render(table + "_chart_sentiment.html")
+    return df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
 
 
 if __name__ == "__main__":

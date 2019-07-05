@@ -40,10 +40,8 @@ def stock_charts(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.n
     data = np.array(df).tolist()
     index = df.index.tolist()
 
-    print(data)
-    print(index)
-
-    kline_datazoom_slider_position(index, data).render("chart_stock.html")
+    kline_datazoom_slider_position(index, data).render(
+        query + "_chart_stock.html")
 
 
 if __name__ == "__main__":

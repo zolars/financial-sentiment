@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+QUERY = 'NYSE:MMM'
+
 # !!! # Crawl responsibly by identifying yourself (and your website/e-mail) on the user-agent
 USER_AGENT = '1181689671@qq.com'
 
@@ -14,7 +16,6 @@ DOWNLOAD_HANDLERS = {'s3': None, }
 SPIDER_MODULES = ['TweetScraper.spiders']
 NEWSPIDER_MODULE = 'TweetScraper.spiders'
 
-MYSQL_TABLE_NAME = 'result'
 MYSQL_DB_NAME = 'finance'
 MYSQL_USER = 'root'
 MYSQL_PASSWORD = 'root'

@@ -38,7 +38,10 @@ def tweet_engine(query):
 
     while True:
         if not p.is_alive():
-            p.start()
+            try:
+                p.start()
+            except Exception as err:
+                print(err)
         try:
             p1 = Process(target=catch_pages_realtime, args=(query,))
             p2 = Process(target=catch_pages_realtime, args=(query,))
@@ -52,5 +55,5 @@ def tweet_engine(query):
 
 
 if __name__ == "__main__":
-    catch_pages_history('"NVIDIA"')
-    # tweet_engine('NVIDIA')
+    # catch_pages_history('"NVIDIA"')
+    tweet_engine('NYSE:MMM')
