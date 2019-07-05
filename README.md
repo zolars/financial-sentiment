@@ -5,13 +5,13 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 ## Usage
 
 1. You need to install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and [MySQL](http://dev.mysql.com/downloads/mysql/) on your computer.
-    ```
+    ```bash
     $ conda -V
     conda 4.6.xx
     ```
 
 2. Create the environment.
-    ```
+    ```bash
     $ cd finanical-sentiment
     $ conda create -n finance python=3.6
     $ conda activate finance
@@ -20,40 +20,55 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```
 
 3. Install dependencies.
-    ```
+    ```bash
     $ conda activate finance
     $ pip install -r requirements.txt
     $ python -m textblob.download_corpora
     ```
 
-4. Run the app
-    ```
+4. Modify the configuration.
 
+    Modify the keywords `QUERY` and `MYSQL_TABLE_NAME` in `TweetScraper/settings.py`. 
+    
+5. Run the app
+    ```bash
+    $ cd finanical-sentiment
+    $ conda activate finance
+    $ scrapy crawl TweetScraper
+    $ python gen_charts.py %stock_id%
     ```
 
 ## Configuration
 
 ### Twitter Spider
 
-| Operator                               | Finds tweets...                                                           |
-| -------------------------------------- | ------------------------------------------------------------------------- |
-| twitter search                         | containing both "twitter" and "search". This is the default operator.     |
-| **"** happy hour **"**                 | containing the exact phrase "happy hour".                                 |
-| love **OR** hate                       | containing either "love" or "hate" (or both).                             |
-| beer **-** root                        | containing "beer" but not "root".                                         |
-| **#** haiku                            | containing the hashtag "haiku".                                           |
-| **from:** alexiskold                   | sent from person "alexiskold".                                            |
-| **to:** techcrunch                     | sent to person "techcrunch".                                              |
-| **@** mashable                         | referencing person "mashable".                                            |
-| "happy hour" **near:** "san francisco" | containing the exact phrase "happy hour" and sent near "san francisco".   |
-| **near:** NYC **within:** 15mi         | sent within 15 miles of "NYC".                                            |
+* The `QUERY` is the keyword for twitter search and the advanced search table is as below:
+
+| Operator                               | Finds tweets...                                              |
+| -------------------------------------- | ------------------------------------------------------------ |
+| twitter search                         | containing both "twitter" and "search". This is the default operator. |
+| **"**happy hour**"**                   | containing the exact phrase "happy hour".                    |
+| love **OR** hate                       | containing either "love" or "hate" (or both).                |
+| beer **-** root                        | containing "beer" but not "root".                            |
+| **#** haiku                            | containing the hashtag "haiku".                              |
+| **from:** alexiskold                   | sent from person "alexiskold".                               |
+| **to:** techcrunch                     | sent to person "techcrunch".                                 |
+| **@** mashable                         | referencing person "mashable".                               |
+| "happy hour" **near:** "san francisco" | containing the exact phrase "happy hour" and sent near "san francisco". |
+| **near:** NYC **within:** 15mi         | sent within 15 miles of "NYC".                               |
 | superhero **since:** 2010-12-27        | containing "superhero" and sent since date "2010-12-27" (year-month-day). |
-| ftw **until:** 2010-12-27              | containing "ftw" and sent up to date "2010-12-27".                        |
-| movie -scary **:)**                    | containing "movie", but not "scary", and with a positive attitude.        |
-| flight **:(**                          | containing "flight" and with a negative attitude.                         |
-| traffic **?**                          | containing "traffic" and asking a question.                               |
-| hilarious **filter:links**             | containing "hilarious" and linking to URLs.                               |
-| news **source:twitterfeed**            | containing "news" and entered via TwitterFeed                             |
+| ftw **until:** 2010-12-27              | containing "ftw" and sent up to date "2010-12-27".           |
+| movie -scary **:)**                    | containing "movie", but not "scary", and with a positive attitude. |
+| flight **:(**                          | containing "flight" and with a negative attitude.            |
+| traffic **?**                          | containing "traffic" and asking a question.                  |
+| hilarious **filter:links**             | containing "hilarious" and linking to URLs.                  |
+| news **source:twitterfeed**            | containing "news" and entered via TwitterFeed                |
+
+* The `MYSQL_TABLE_NAME` keyword is as same as the stock code. For example:
+
+```
+MYSQL_TABLE_NAME = "GOOG"
+```
 
 ### Weibo Spider
 

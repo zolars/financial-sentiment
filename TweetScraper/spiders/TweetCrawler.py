@@ -2,6 +2,7 @@ from scrapy.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
 from scrapy import http
 from scrapy.shell import inspect_response  # for debugging
+from scrapy.utils.project import get_project_settings
 import re
 import json
 import time
@@ -22,9 +23,9 @@ class TweetScraper(CrawlSpider):
     name = 'TweetScraper'
     allowed_domains = ['twitter.com']
 
-    def __init__(self, query='', lang='', crawl_user=False, top_tweet=False):
-
-        self.query = query
+    def __init__(self, lang='en', crawl_user=False, top_tweet=False):
+        settings = get_project_settings()
+        self.query = settings['QUERY']
         self.url = "https://twitter.com/i/search/timeline?l={}".format(
             lang)
         if not top_tweet:

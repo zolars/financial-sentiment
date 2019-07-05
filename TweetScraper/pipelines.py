@@ -46,7 +46,7 @@ class SavetoMySQLPipeline(object):
     def __init__(self):
         settings = get_project_settings()
         # connect to mysql server
-        self._table = settings['QUERY']
+        self._table = settings['MYSQL_TABLE_NAME']
         db = settings['MYSQL_DB_NAME']
         user = settings['MYSQL_USER']
         passwd = settings['MYSQL_PASSWORD']
