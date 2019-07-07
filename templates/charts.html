@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Sentiment Charts</title>
+    <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: rgb(212, 213, 236);
+            font-weight: 500;
+            font-family: "Microsoft YaHei", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
+        }
+
+        #container {
+            margin: 0 auto;
+        }
+
+        div.search {
+            padding: 30px 0;
+        }
+
+
+        input,
+        button {
+            border: none;
+            outline: none;
+        }
+
+        input {
+            width: 100%;
+            height: 42px;
+            padding-left: 13px;
+            padding-right: 46px;
+        }
+
+        button {
+            height: 42px;
+            width: 42px;
+            cursor: pointer;
+            position: absolute;
+        }
+
+        .form {
+            position: relative;
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        .bar1 input {
+            border: 2px solid #7BA7AB;
+            border-radius: 5px;
+            background: #F9F0DA;
+            color: #9E9C9C;
+        }
+
+        .bar1 button {
+            top: 0;
+            right: 0;
+            background: #7BA7AB;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .bar1 button:before {
+            content: "\f002";
+            font-family: FontAwesome;
+            font-size: 16px;
+            color: #F9F0DA;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container">
+        <div class="search bar1">
+            <div class="form">
+                <input id="text" type="text" placeholder="Please Input the Stock ID...">
+                <button id="search_btn" onclick="search_chart()"></button>
+            </div>
+        </div>
+    </div>
+    <div id="sentiment_chart" style="width:1500px; height:600px;"></div>
+    <div id="stock_chart" style="width:1500px; height:600px;"></div>
+
+    <script>
+        function search_chart() {
+            var sentiment_chart = echarts.init(document.getElementById('sentiment_chart'), 'white', { renderer: 'canvas' });
+            var stock_chart = echarts.init(document.getElementById('stock_chart'), 'white', { renderer: 'canvas' });
+            $.ajax({
+                type: "GET",
+                url: "http://127.0.0.1:5000/charts?stock_id=" + document.getElementById("text").value,
+                dataType: 'json',
+                success: function (result) {
+                    console.log(result)
+                    sentiment_chart.setOption(result["sentiment"]);
+                    stock_chart.setOption(result["stock"]);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log(XMLHttpRequest.status);
+                    console.log(XMLHttpRequest.readyState);
+                    console.log(textStatus);
+                },
+            });
+        }
+    </script>
+</body>
+
+</html>

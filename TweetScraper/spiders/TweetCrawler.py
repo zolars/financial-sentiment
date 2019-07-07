@@ -3,6 +3,8 @@ from scrapy.selector import Selector
 from scrapy import http
 from scrapy.shell import inspect_response  # for debugging
 from scrapy.utils.project import get_project_settings
+
+import sys
 import re
 import json
 import time

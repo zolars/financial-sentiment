@@ -30,11 +30,13 @@ class MySQL:
         return df
 
 
-def line_smooth(index, data) -> Line:
+def line_smooth(index, data, name) -> Line:
+    # for i in data:
+    #     if i.
     c = (
         Line()
         .add_xaxis(index)
-        .add_yaxis("Sentiment value", data, is_smooth=True)
+        .add_yaxis("Sentiment value", data, is_smooth=True, is_connect_nones=True)
         .set_global_opts(
             xaxis_opts=opts.AxisOpts(is_scale=True),
             yaxis_opts=opts.AxisOpts(
@@ -42,22 +44,25 @@ def line_smooth(index, data) -> Line:
                 splitarea_opts=opts.SplitAreaOpts(
                     is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1))),
             datazoom_opts=[opts.DataZoomOpts(pos_bottom="-2%")],
-            title_opts=opts.TitleOpts(title="Sentiment Analysis")
+            title_opts=opts.TitleOpts(title="Sentiment Analysis : " + name)
         )
     )
     return c
 
 
-def sentiment_charts(table):
+def gen_sentiment_chart(table):
     df = MySQL(table).search()
     df['time'] = pd.to_datetime(df['time'])
     df = df.set_index('time')
     df = df.resample('w').mean()
+    df = df.fillna(0)
     data = np.around(np.array(df), decimals=2).tolist()
     index = df.index.tolist()
-    line_smooth(index, data).render("html/" + table + "_chart_sentiment.html")
-    return df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
+    sentiment_chart = line_smooth(index, data, table)
+    return sentiment_chart, df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
 
 
 if __name__ == "__main__":
-    startdate, enddate = sentiment_charts("NVIDIA")
+    c, startdate, enddate = gen_sentiment_chart("mmm")
+    c.render()
+    print(c.dump_options())

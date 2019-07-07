@@ -6,7 +6,7 @@ from pyecharts import options as opts
 from pyecharts.charts import Kline
 
 
-def kline_datazoom_slider_position(index, data) -> Kline:
+def kline_datazoom_slider_position(index, data, name) -> Kline:
     c = (
         Kline()
         .add_xaxis(index)
@@ -20,13 +20,13 @@ def kline_datazoom_slider_position(index, data) -> Kline:
                 ),
             ),
             datazoom_opts=[opts.DataZoomOpts(pos_bottom="-2%")],
-            title_opts=opts.TitleOpts(title="Stock K-line Graph"),
+            title_opts=opts.TitleOpts(title="Stock K-line Graph : " + name),
         )
     )
     return c
 
 
-def stock_charts(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
+def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
 
     config = {'api_key': '138fd2efede60c466126add93ebf585fc5492f75'}
     client = TiingoClient(config)
@@ -40,11 +40,11 @@ def stock_charts(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.n
     data = np.array(df).tolist()
     index = df.index.tolist()
 
-    kline_datazoom_slider_position(index, data).render("html/" +
-                                                       query + "_chart_stock.html")
+    c = kline_datazoom_slider_position(index, data, query)
+    return c
 
 
 if __name__ == "__main__":
     startdate = dt.datetime(2019, 5, 1)
     enddate = dt.datetime.now()
-    stock_charts("NVDA", startdate, enddate)
+    gen_stock_chart("NVDA", startdate, enddate)

@@ -1,4 +1,4 @@
-# finanical-sentiment
+# finanical-sentiment-charts
 
 Cooperation project with the University of New South Wales aimed to analyse influence between social sentiment and financial tendency. 
 
@@ -34,7 +34,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```bash
     $ cd finanical-sentiment
     $ conda activate finance
-    $ scrapy crawl TweetScraper
+    $ scrapy crawl TweetScraper -s LOG_FILE=log/TweetScraper.log
     $ python gen_charts.py %stock_id%
     ```
 
@@ -44,25 +44,25 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 
 * The `QUERY` is the keyword for twitter search and the advanced search table is as below:
 
-| Operator                               | Finds tweets...                                              |
-| -------------------------------------- | ------------------------------------------------------------ |
-| twitter search                         | containing both "twitter" and "search". This is the default operator. |
-| **"**happy hour**"**                   | containing the exact phrase "happy hour".                    |
-| love **OR** hate                       | containing either "love" or "hate" (or both).                |
-| beer **-** root                        | containing "beer" but not "root".                            |
-| **#** haiku                            | containing the hashtag "haiku".                              |
-| **from:** alexiskold                   | sent from person "alexiskold".                               |
-| **to:** techcrunch                     | sent to person "techcrunch".                                 |
-| **@** mashable                         | referencing person "mashable".                               |
-| "happy hour" **near:** "san francisco" | containing the exact phrase "happy hour" and sent near "san francisco". |
-| **near:** NYC **within:** 15mi         | sent within 15 miles of "NYC".                               |
+| Operator                               | Finds tweets...                                                           |
+| -------------------------------------- | ------------------------------------------------------------------------- |
+| twitter search                         | containing both "twitter" and "search". This is the default operator.     |
+| **"**happy hour**"**                   | containing the exact phrase "happy hour".                                 |
+| love **OR** hate                       | containing either "love" or "hate" (or both).                             |
+| beer **-** root                        | containing "beer" but not "root".                                         |
+| **#** haiku                            | containing the hashtag "haiku".                                           |
+| **from:** alexiskold                   | sent from person "alexiskold".                                            |
+| **to:** techcrunch                     | sent to person "techcrunch".                                              |
+| **@** mashable                         | referencing person "mashable".                                            |
+| "happy hour" **near:** "san francisco" | containing the exact phrase "happy hour" and sent near "san francisco".   |
+| **near:** NYC **within:** 15mi         | sent within 15 miles of "NYC".                                            |
 | superhero **since:** 2010-12-27        | containing "superhero" and sent since date "2010-12-27" (year-month-day). |
-| ftw **until:** 2010-12-27              | containing "ftw" and sent up to date "2010-12-27".           |
-| movie -scary **:)**                    | containing "movie", but not "scary", and with a positive attitude. |
-| flight **:(**                          | containing "flight" and with a negative attitude.            |
-| traffic **?**                          | containing "traffic" and asking a question.                  |
-| hilarious **filter:links**             | containing "hilarious" and linking to URLs.                  |
-| news **source:twitterfeed**            | containing "news" and entered via TwitterFeed                |
+| ftw **until:** 2010-12-27              | containing "ftw" and sent up to date "2010-12-27".                        |
+| movie -scary **:)**                    | containing "movie", but not "scary", and with a positive attitude.        |
+| flight **:(**                          | containing "flight" and with a negative attitude.                         |
+| traffic **?**                          | containing "traffic" and asking a question.                               |
+| hilarious **filter:links**             | containing "hilarious" and linking to URLs.                               |
+| news **source:twitterfeed**            | containing "news" and entered via TwitterFeed                             |
 
 * The `MYSQL_TABLE_NAME` keyword is as same as the stock code. For example:
 
