@@ -28,7 +28,7 @@ def kline_datazoom_slider_position(index, data, name) -> Kline:
             title_opts=opts.TitleOpts(title="Stock K-line Graph : " + name),
             tooltip_opts=opts.TooltipOpts(
                 trigger="axis",
-                axis_pointer_type="line",),
+                axis_pointer_type="line"),
         )
     )
     return c
@@ -40,10 +40,11 @@ def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetim
     client = TiingoClient(config)
 
     df = client.get_dataframe(query,
-                              frequency='daily',
+                              frequency='weekly',
                               startDate='{:%Y-%m-%d}'.format(startdate),
                               endDate='{:%Y-%m-%d}'.format(enddate))
     df = df.loc[:, ['open', 'close', 'low', 'high']]
+    # df = df.resample('w').mean()
 
     data = np.array(df).tolist()
 
@@ -57,4 +58,4 @@ def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetim
 if __name__ == "__main__":
     startdate = dt.datetime(2019, 5, 1)
     enddate = dt.datetime.now()
-    gen_stock_chart("NVDA", startdate, enddate)
+    gen_stock_chart("NVDA", startdate, enddate).render()

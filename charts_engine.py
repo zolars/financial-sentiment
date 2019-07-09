@@ -28,8 +28,8 @@ def get_charts():
 
     sentiment_chart, startdate, enddate = gen_sentiment_chart(stock_id)
     stock_chart = gen_stock_chart(stock_id, startdate, enddate)
-    # sentiment_chart.overlap(stock_chart)
-    return json.dumps({"sentiment": json.loads(sentiment_chart.dump_options()), "stock": json.loads(stock_chart.dump_options())})
+    sentiment_chart.overlap(stock_chart)
+    return json.dumps({"chart": json.loads(sentiment_chart.dump_options())})
 
 
 if __name__ == "__main__":

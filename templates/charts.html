@@ -90,22 +90,22 @@
         </div>
     </div>
 
-    <div id="sentiment_chart" style="width:50%; height:550px; float:left"></div>
-    <div id="stock_chart" style="width:50%; height:550px; float:right"></div>
+    <div id="chart" style="width:100%; height:550px;"></div>
+    <!-- <div id="stock_chart" style="width:50%; height:550px; float:right"></div> -->
 
     <script>
         function search_chart() {
             beginLoading();
-            var sentiment_chart = echarts.init(document.getElementById('sentiment_chart'), 'white', { renderer: 'canvas' });
-            var stock_chart = echarts.init(document.getElementById('stock_chart'), 'white', { renderer: 'canvas' });
+            var chart = echarts.init(document.getElementById('chart'), 'white', { renderer: 'canvas' });
+            // var stock_chart = echarts.init(document.getElementById('stock_chart'), 'white', { renderer: 'canvas' });
             $.ajax({
                 type: "GET",
                 url: "http://127.0.0.1:5000/charts?stock_id=" + document.getElementById("text").value,
                 dataType: 'json',
                 success: function (result) {
                     console.log(result)
-                    sentiment_chart.setOption(result["sentiment"]);
-                    stock_chart.setOption(result["stock"]);
+                    chart.setOption(result["chart"]);
+                    // stock_chart.setOption(result["stock"]);
                     endLoading();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {

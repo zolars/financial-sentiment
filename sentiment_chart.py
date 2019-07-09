@@ -9,6 +9,7 @@ from pyecharts.globals import ThemeType
 
 from stock_chart import gen_stock_chart
 
+
 class MySQL:
     def __init__(self, table):
         # Connect to MySQL
@@ -27,7 +28,7 @@ class MySQL:
         self._conn.close()
 
     def search(self):
-        sql = 'select time, sentiment from ' + self._table
+        sql = 'select time, sentiment from ' + self._table + ' where sentiment!=0'
         df = pd.read_sql(sql, con=self._conn)
         return df
 
@@ -44,6 +45,7 @@ def line_smooth(index, data, name) -> Line:
         .extend_axis(
             yaxis=opts.AxisOpts(
                 name="Stock K-line",
+                is_scale=True,
                 position="right",
                 axisline_opts=opts.AxisLineOpts(
                     linestyle_opts=opts.LineStyleOpts(color="#675bba")
@@ -56,6 +58,7 @@ def line_smooth(index, data, name) -> Line:
         .set_global_opts(
             xaxis_opts=opts.AxisOpts(is_scale=True),
             yaxis_opts=opts.AxisOpts(
+                name="Sentiment Value",
                 is_scale=True,
                 splitarea_opts=opts.SplitAreaOpts(
                     is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1))),
