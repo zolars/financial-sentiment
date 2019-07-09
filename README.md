@@ -26,16 +26,26 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     $ python -m textblob.download_corpora
     ```
 
-4. Modify the configuration.
+4. Create a new DATABASE with MySQL.
+
+    ```
+    $ mysql -u root -p
+    Enter password:******
+    mysql> create DATABASE finance;
+    mysql> use finance;
+    Database changed
+    ```
+
+5. Modify the configuration.
 
     Modify the keywords `QUERY` and `MYSQL_TABLE_NAME` in `TweetScraper/settings.py`. 
     
-5. Run the app
+6. Run the app
     ```bash
     $ cd finanical-sentiment
     $ conda activate finance
     $ scrapy crawl TweetScraper -s LOG_FILE=log/TweetScraper.log
-    $ python gen_charts.py %stock_id%
+    $ python charts_engine.py
     ```
 
 ## Configuration
