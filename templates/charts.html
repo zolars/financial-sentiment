@@ -77,21 +77,25 @@
     </style>
 </head>
 
-<body>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
-    <div id="container">
-        <div class="search bar1">
-            <div class="form">
-                <input id="text" type="text" placeholder="Please Input the Stock ID...">
-                <button id="search_btn" onclick="search_chart()"></button>
-            </div>
+<body>
+    <br>
+    <h1 align="center" style="font-family: Cantarell">
+        Financial Sentiment Charts</h1>
+    <div class="search bar1">
+        <div class="form">
+            <input id="text" type="text" placeholder="Please Input the Stock ID...">
+            <button id="search_btn" onclick="search_chart()"></button>
         </div>
     </div>
-    <div id="sentiment_chart" style="width:1500px; height:600px;"></div>
-    <div id="stock_chart" style="width:1500px; height:600px;"></div>
+
+    <div id="sentiment_chart" style="width:50%; height:550px; float:left"></div>
+    <div id="stock_chart" style="width:50%; height:550px; float:right"></div>
 
     <script>
         function search_chart() {
+            beginLoading();
             var sentiment_chart = echarts.init(document.getElementById('sentiment_chart'), 'white', { renderer: 'canvas' });
             var stock_chart = echarts.init(document.getElementById('stock_chart'), 'white', { renderer: 'canvas' });
             $.ajax({
@@ -102,13 +106,23 @@
                     console.log(result)
                     sentiment_chart.setOption(result["sentiment"]);
                     stock_chart.setOption(result["stock"]);
+                    endLoading();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    endLoading();
                     console.log(XMLHttpRequest.status);
                     console.log(XMLHttpRequest.readyState);
                     console.log(textStatus);
                 },
             });
+
+            function beginLoading() {
+
+            }
+
+            function endLoading() {
+
+            }
         }
     </script>
 </body>

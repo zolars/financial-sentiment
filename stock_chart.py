@@ -4,13 +4,18 @@ import numpy as np
 from tiingo import TiingoClient
 from pyecharts import options as opts
 from pyecharts.charts import Kline
+from pyecharts.globals import ThemeType
 
 
 def kline_datazoom_slider_position(index, data, name) -> Kline:
     c = (
-        Kline()
+        Kline(init_opts=opts.InitOpts(
+            theme=ThemeType.ROMANTIC,
+            width="100%",
+            height="500px",
+        ))
         .add_xaxis(index)
-        .add_yaxis("kline", data)
+        .add_yaxis(name + "'s K-line", data, yaxis_index=1)
         .set_global_opts(
             xaxis_opts=opts.AxisOpts(is_scale=True),
             yaxis_opts=opts.AxisOpts(
@@ -21,6 +26,9 @@ def kline_datazoom_slider_position(index, data, name) -> Kline:
             ),
             datazoom_opts=[opts.DataZoomOpts(pos_bottom="-2%")],
             title_opts=opts.TitleOpts(title="Stock K-line Graph : " + name),
+            tooltip_opts=opts.TooltipOpts(
+                trigger="axis",
+                axis_pointer_type="line",),
         )
     )
     return c
@@ -38,8 +46,10 @@ def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetim
     df = df.loc[:, ['open', 'close', 'low', 'high']]
 
     data = np.array(df).tolist()
-    index = df.index.tolist()
 
+    index = []
+    for i in df.index.tolist():
+        index.append("{:%Y-%m-%d}".format(i.to_pydatetime()))
     c = kline_datazoom_slider_position(index, data, query)
     return c
 
