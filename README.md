@@ -44,7 +44,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```bash
     $ cd finanical-sentiment
     $ conda activate finance
-    $ scrapy crawl TweetScraper -s LOG_FILE=log/TweetScraper.log
+    $ python tweet_engine.py
     $ python charts_engine.py
     ```
 

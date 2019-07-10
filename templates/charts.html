@@ -51,25 +51,46 @@
         .form {
             position: relative;
             width: 300px;
+            right: 30px;
             margin: 0 auto;
         }
 
-        .bar1 input {
+        .input input {
             border: 2px solid #7BA7AB;
             border-radius: 5px;
             background: #F9F0DA;
             color: #9E9C9C;
         }
 
-        .bar1 button {
+        .search_btn button {
+            height: 42px;
+            width: 42px;
+            cursor: pointer;
+            position: absolute;
             top: 0;
-            right: 0;
-            background: #7BA7AB;
+            right: 42px;
+            background: rgb(123, 167, 221);
+        }
+
+        .search_btn button:before {
+            content: "\f002";
+            font-family: FontAwesome;
+            font-size: 16px;
+            color: #F9F0DA;
+        }
+
+        .realtime_btn button {
+            height: 42px;
+            width: 104px;
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            right: -62px;
             border-radius: 0 5px 5px 0;
         }
 
-        .bar1 button:before {
-            content: "\f002";
+        .realtime_btn button:before {
+            content: "\f011  Realtime";
             font-family: FontAwesome;
             font-size: 16px;
             color: #F9F0DA;
@@ -81,48 +102,82 @@
 
 <body>
     <br>
-    <h1 align="center" style="font-family: Cantarell">
+    <h1 align="center" id="header" style="font-family: Cantarell">
         Financial Sentiment Charts</h1>
-    <div class="search bar1">
-        <div class="form">
-            <input id="text" type="text" placeholder="Please Input the Stock ID...">
-            <button id="search_btn" onclick="search_chart()"></button>
+    <div class="search bar">
+        <div id="form" class="form">
+            <div class="input">
+                <input id="input" type="text" placeholder="Please Input the Stock ID...">
+            </div>
+            <div class="search_btn">
+                <button id="search_btn" onclick="search_btn_click();"></button>
+            </div>
+            <div class="realtime_btn">
+                <button id="realtime_btn" style="background: rgb(198, 85, 109)" onclick="realtime_btn_click()"></button>
+            </div>
         </div>
     </div>
 
     <div id="chart" style="width:100%; height:550px;"></div>
-    <!-- <div id="stock_chart" style="width:50%; height:550px; float:right"></div> -->
 
     <script>
-        function search_chart() {
-            beginLoading();
-            var chart = echarts.init(document.getElementById('chart'), 'white', { renderer: 'canvas' });
-            // var stock_chart = echarts.init(document.getElementById('stock_chart'), 'white', { renderer: 'canvas' });
-            $.ajax({
-                type: "GET",
-                url: "http://127.0.0.1:5000/charts?stock_id=" + document.getElementById("text").value,
-                dataType: 'json',
-                success: function (result) {
-                    console.log(result)
-                    chart.setOption(result["chart"]);
-                    // stock_chart.setOption(result["stock"]);
-                    endLoading();
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    endLoading();
-                    console.log(XMLHttpRequest.status);
-                    console.log(XMLHttpRequest.readyState);
-                    console.log(textStatus);
-                },
-            });
+        var chart = echarts.init(document.getElementById('chart'), 'white', { renderer: 'canvas' });
 
-            function beginLoading() {
+        var query = "";
+        var isRealtime = false;
 
+        $(
+            function () {
+                fetchData(false);
+                setInterval(fetchData, 2000);
             }
+        );
 
-            function endLoading() {
+        function search_btn_click() {
+            query = document.getElementById('input').value;
+            fetchData(true);
+        }
 
+        function realtime_btn_click() {
+            if (isRealtime) {
+                alert("Realtime Refresh has been stopped!");
+                document.getElementById("realtime_btn").style.background = "rgb(198, 85, 109)";
             }
+            else {
+                alert("Realtime Refresh has started!");
+                document.getElementById("realtime_btn").style.background = "rgb(85, 198, 121)";
+            }
+            isRealtime = !isRealtime;
+        }
+
+        function fetchData(isClick) {
+            if (query != "" && query != "undefined" && isRealtime || isClick) {
+                beginLoading();
+                $.ajax({
+                    type: "GET",
+                    url: "http://127.0.0.1:5000/charts?stock_id=" + query,
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log(result)
+                        chart.setOption(result["chart"]);
+                        endLoading();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        endLoading();
+                        console.log(XMLHttpRequest.status);
+                        console.log(XMLHttpRequest.readyState);
+                        console.log(textStatus);
+                    },
+                });
+            }
+        }
+
+        function beginLoading() {
+
+        }
+
+        function endLoading() {
+
         }
     </script>
 </body>

@@ -56,4 +56,3 @@ def tweet_engine():
 
 if __name__ == "__main__":
     catch_pages_history()
-    # tweet_engine('NYSE:MMM')

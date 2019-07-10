@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-QUERY = 'NYSE AND MMM'
-MYSQL_TABLE_NAME = 'MMM'
+QUERY = 'NASDAQ:CSCO'
+MYSQL_TABLE_NAME = 'CSCO'
 
 # !!! # Crawl responsibly by identifying yourself (and your website/e-mail) on the user-agent
 USER_AGENT = '1181689671@qq.com'
