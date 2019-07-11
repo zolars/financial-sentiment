@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-QUERY = 'NASDAQ:CSCO'
+QUERY = 'Cisco Systems'
 MYSQL_TABLE_NAME = 'CSCO'
 
 # !!! # Crawl responsibly by identifying yourself (and your website/e-mail) on the user-agent

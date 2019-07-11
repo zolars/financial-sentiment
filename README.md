@@ -27,7 +27,6 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```
 
 4. Create a new DATABASE with MySQL.
-
     ```
     $ mysql -u root -p
     Enter password:******
@@ -45,6 +44,11 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     $ cd finanical-sentiment
     $ conda activate finance
     $ python tweet_engine.py
+    ```
+
+    ```bash
+    $ cd finanical-sentiment
+    $ conda activate finance
     $ python charts_engine.py
     ```
 
