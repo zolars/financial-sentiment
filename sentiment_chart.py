@@ -1,4 +1,3 @@
-# %%
 from textblob import TextBlob
 import pandas as pd
 import pymysql
@@ -17,7 +16,7 @@ class MySQL:
             host='localhost',  # mysql server address
             port=3306,  # port num
             user='root',  # username
-            passwd='root',  # password
+            passwd='123456',  # password
             db='finance',
             charset='utf8mb4',
         )
@@ -27,7 +26,12 @@ class MySQL:
     def __del__(self):
         self._conn.close()
 
-    def search(self):
+    def searchSentiment(self):
+        sql = 'select time, sentiment from ' + self._table   # + ' where sentiment!=0'
+        df = pd.read_sql(sql, con=self._conn)
+        return df
+
+    def searchTweets(self):
         sql = 'select time, sentiment from ' + self._table + ' where sentiment!=0'
         df = pd.read_sql(sql, con=self._conn)
         return df
@@ -37,7 +41,7 @@ def line_smooth(index, data, name) -> Line:
     c = (
         Line(init_opts=opts.InitOpts(
             theme=ThemeType.ROMANTIC,
-            width="100%",
+            # width="100%",
             height="500px",
         ))
         .add_xaxis(index)
@@ -73,7 +77,7 @@ def line_smooth(index, data, name) -> Line:
 
 
 def gen_sentiment_chart(table):
-    df = MySQL(table).search()
+    df = MySQL(table).searchSentiment()
     df['time'] = pd.to_datetime(df['time'])
     df = df.set_index('time')
     df = df.resample('w').mean()
@@ -84,6 +88,10 @@ def gen_sentiment_chart(table):
         index.append("{:%Y-%m-%d}".format(i.to_pydatetime()))
     sentiment_chart = line_smooth(index, data, table)
     return sentiment_chart, df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
+
+
+def getTweets():
+    pass
 
 
 if __name__ == "__main__":

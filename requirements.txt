@@ -2,7 +2,6 @@ requests
 pymysql
 tqdm
 emoji
-scrapy
 tiingo[pandas]
 pyecharts
 textblob

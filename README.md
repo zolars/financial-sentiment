@@ -22,7 +22,8 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 3. Install dependencies.
     ```bash
     $ conda activate finance
-    $ pip install -r requirements.txt
+    $ conda install -c conda-forge scrapy
+    $ python -m pip install -r requirements.txt
     $ python -m textblob.download_corpora
     ```
 

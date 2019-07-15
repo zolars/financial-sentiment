@@ -19,7 +19,7 @@ NEWSPIDER_MODULE = 'TweetScraper.spiders'
 
 MYSQL_DB_NAME = 'finance'
 MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'root'
+MYSQL_PASSWORD = '123456'
 ITEM_PIPELINES = {
     # 'TweetScraper.pipelines.SaveToFilePipeline': 100,
 

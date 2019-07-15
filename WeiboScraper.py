@@ -38,7 +38,7 @@ class MySQL:
             host='localhost',  # mysql server address
             port=3306,  # port num
             user='root',  # username
-            passwd='root',  # password
+            passwd='123456',  # password
             db='finance',
             charset='utf8mb4',
         )
