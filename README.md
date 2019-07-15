@@ -2,6 +2,8 @@
 
 Cooperation project with the University of New South Wales aimed to analyse influence between social sentiment and financial tendency. 
 
+<img src="https://raw.githubusercontent.com/zolars/typora-user-images/master/20190715132829.png"/>
+
 ## Usage
 
 1. You need to install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and [MySQL](http://dev.mysql.com/downloads/mysql/) on your computer.
