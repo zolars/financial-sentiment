@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-QUERY = 'Cisco Systems'
-MYSQL_TABLE_NAME = 'CSCO'
+QUERY = 'Apple Inc'
+MYSQL_TABLE_NAME = 'AAPL'
 
 # !!! # Crawl responsibly by identifying yourself (and your website/e-mail) on the user-agent
 USER_AGENT = '1181689671@qq.com'
