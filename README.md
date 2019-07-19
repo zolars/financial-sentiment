@@ -12,7 +12,12 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     conda 4.6.xx
     ```
 
-2. Create the environment.
+2. Get the code from Github clone.
+    ```bash
+    $ git clone https://github.com/zolars/finanical-sentiment.git
+    ```
+
+3. Create the environment.
     ```bash
     $ cd finanical-sentiment
     $ conda create -n finance python=3.6
@@ -21,7 +26,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     Python 3.6.8 :: Anaconda, Inc. 
     ```
 
-3. Install dependencies.
+4. Install dependencies.
     ```bash
     $ conda activate finance
     $ conda install -c conda-forge scrapy
@@ -29,7 +34,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     $ python -m textblob.download_corpora
     ```
 
-4. Create a new DATABASE with MySQL.
+5. Create a new DATABASE with MySQL.
     ```
     $ mysql -u root -p
     Enter password:******
@@ -38,11 +43,11 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     Database changed
     ```
 
-5. Modify the configuration.
+6. Modify the configuration.
 
     Modify the keywords `QUERY` and `MYSQL_TABLE_NAME` in `TweetScraper/settings.py`. 
     
-6. Run the app
+7. Run the app
     ```bash
     $ cd finanical-sentiment
     $ conda activate finance
