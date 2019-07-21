@@ -31,6 +31,10 @@
             font-family: "Microsoft YaHei", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
         }
 
+        [ui-pnotify].ui-pnotify.stack-bar-top {
+            width: 100%;
+        }
+
         .middleware {
             display: block;
             text-align: center;
@@ -66,8 +70,8 @@
     <script>
         var chart = echarts.init(document.getElementById('chart'), 'white', { renderer: 'canvas' });
 
-        var query = [];
-        var stock_id = new Set();
+        var query_list = [];
+        var stock_id_set = new Set();
         var isRealtime = false;
         var percent = 0;
 
@@ -162,25 +166,35 @@
                             });
                         } else if (e.value == null) {
 
-                            stock_id.add(temp_pair[0]);
-                            query.push(temp_pair[1]);
-                            query_notice.cancelClose().update({
-                                title: 'Success',
-                                text: '<p>Add a new Scrapy as below : </p><b>Stock ID : ' + temp_pair[0] + '</b><br><b>Query : ' + temp_pair[1] + '</b>',
-                                textTrusted: true,
-                                icon: true,
-                                type: 'success',
-                                hide: false,
-                                modules: {
-                                    Confirm: {
-                                        prompt: false,
-                                        confirm: false
-                                    },
-                                    Buttons: {
-                                        closer: true
-                                    }
+                            stock_id_set.add(temp_pair[0]);
+                            query_list.push(temp_pair[1]);
+                            query_notice.remove();
+                            showSuccessMsg();
+                            fetchData(true);
+
+                            function showSuccessMsg() {
+                                if (typeof window.stackBarTop === 'undefined') {
+                                    window.stackBarTop = {
+                                        'dir1': 'down',
+                                        'firstpos1': 0,
+                                        'spacing1': 0,
+                                        'push': 'top'
+                                    };
                                 }
-                            });
+                                var opts = {
+                                    title: 'Add a new Scrapy as below : ',
+                                    text: '<b>Stock ID : ' + temp_pair[0] + '</b><br><b>Query : ' + temp_pair[1] + '</b>',
+                                    textTrusted: true,
+                                    type: 'success',
+                                    addClass: 'stack-bar-top',
+                                    cornerClass: 'ui-pnotify-sharp',
+                                    shadow: false,
+                                    width: '100%',
+                                    stack: window.stackBarTop
+                                };
+
+                                PNotify.alert(opts);
+                            }
 
                         } else {
                             temp_pair.push(e.value);
@@ -225,7 +239,7 @@
 
                 } else {
                     v = e.value.toLocaleUpperCase();
-                    if (stock_id.has(v)) {
+                    if (stock_id_set.has(v)) {
                         stock_id_notice.cancelClose().update({
                             title: 'Sorry',
                             text: 'Do not add the same Stock ID.',
@@ -293,21 +307,6 @@
             }
         );
 
-        function search_btn_click() {
-            query = document.getElementById('input').value;
-            if (query === "") {
-                var notice = PNotify.error({
-                    title: 'Error!',
-                    text: 'Please input the words you want to search for!'
-                });
-                setTimeout(function () {
-                    notice.close();
-                }, 5000);
-            }
-            else
-                fetchData(true);
-        }
-
         $('#realtime_btn').click(function () {
             if (isRealtime) {
                 var notice = PNotify.notice({
@@ -333,32 +332,33 @@
         })
 
         function fetchData(isClick) {
-            if (query != "" && query != "undefined" && isRealtime || isClick) {
+            if (isRealtime || isClick) {
                 beginLoading(isClick);
-                $.ajax({
-                    type: "GET",
-                    url: "http://127.0.0.1:5000/charts?stock_id=" + query,
-                    dataType: 'json',
-                    success: function (result) {
-                        console.log(result)
-                        chart.setOption(result["chart"]);
-                        endLoading(isClick);
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        errorLoading(isClick);
-                        console.log(XMLHttpRequest.status);
-                        console.log(XMLHttpRequest.readyState);
-                        console.log(textStatus);
-                    },
-                });
+                count = 0;
+                for (var stock_id of stock_id_set) {
+                    query = query_list[count];
+                    count++;
+                    $.ajax({
+                        type: "GET",
+                        url: "http://127.0.0.1:5000/charts?stock_id=" + stock_id + "&&query=" + query,
+                        dataType: 'json',
+                        success: function (result) {
+                            console.log(result)
+                            chart.setOption(result["chart"]);
+                            endLoading(isClick);
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            errorLoading(isClick);
+                            console.log(XMLHttpRequest.status);
+                            console.log(XMLHttpRequest.readyState);
+                            console.log(textStatus);
+                        },
+                    });
+                }
             }
         }
 
         function loading() {
-            // if (window.loading_notice) {
-            //     window.loading_notice.open();
-            // }
-            // else {
             percent = 0;
             PNotify.defaults.icons = 'fontawesome5';
             window.loading_notice = PNotify.info({
@@ -430,8 +430,6 @@
                 }, 120);
             }, 2000);
         }
-        // }
-
 
         function beginLoading(isClick) {
             if (isClick) {
