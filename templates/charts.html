@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="https://codepen.io/jgthms/pen/EjxBdR.css">
 
     <script type="text/javascript" src="https://sciactive.com/pnotify/dist/iife/PNotify.js"></script>
+    <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyConfirm.js"></script>
     <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyButtons.js"></script>
     <link href="https://sciactive.com/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet" type="text/css" />
 
@@ -30,7 +31,7 @@
             font-family: "Microsoft YaHei", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
         }
 
-        div {
+        .middleware {
             display: block;
             text-align: center;
         }
@@ -42,15 +43,21 @@
 <body background="https://raw.githubusercontent.com/zolars/typora-user-images/master/20190721175825.jpg">
     <br>
 
-    <!-- <h1 align="center" id="header" style="font-family: Cantarell">
+    <h1 align="center" id="header" style="font-family: Cantarell">
         Financial Sentiment Charts
-    </h1> -->
+    </h1>
 
-    <div>
+    <div class='middleware'>
         <a id='search_btn' class="button button-blue">
             <i class="fas fa-search"></i>
-            Add a new Scrapy in Twitter.com
+            Add a new Scrapy for Twitter.com
         </a>
+
+        <a id='realtime_btn' class="button button-red">
+            <i class="fas fa-clock"></i>
+            Realtime
+        </a>
+
     </div>
 
 
@@ -59,13 +66,224 @@
     <script>
         var chart = echarts.init(document.getElementById('chart'), 'white', { renderer: 'canvas' });
 
-        var query = "";
+        var query = [];
+        var stock_id = new Set();
         var isRealtime = false;
         var percent = 0;
 
-
         $('#search_btn').click(function () {
-            window.open('twitter_advance_search.html', "_blank", "scrollbars=yes,alwaysRaised=yes");
+            var temp_pair = []
+            var stock_id_notice = PNotify.notice({
+                title: 'Stock ID Needed',
+                text: 'Please input the Stock ID : ',
+                icon: 'fas fa-question-circle',
+                hide: false,
+                stack: {
+                    'dir1': 'down',
+                    'modal': true,
+                    'firstpos1': 250
+                },
+                modules: {
+                    Confirm: {
+                        prompt: true
+                    },
+                    Buttons: {
+                        closer: false,
+                        sticker: false
+                    },
+                    History: {
+                        history: false
+                    },
+                }
+            });
+
+            stock_id_notice.on('pnotify.confirm', function (e) {
+                if (e.value === "") {
+                    stock_id_notice.cancelClose().update({
+                        title: 'Sorry',
+                        text: 'The Stock ID cannot be null.',
+                        icon: true,
+                        type: 'info',
+                        hide: true,
+                        modules: {
+                            Confirm: {
+                                prompt: false,
+                                confirm: false,
+                            },
+                            Buttons: {
+                                closer: true
+                            }
+                        }
+                    });
+                }
+                else if (e.value == null) {
+
+                    var query_notice = PNotify.notice({
+                        title: 'Query Needed',
+                        text: 'Please input the Query : ',
+                        icon: 'fas fa-question-circle',
+                        hide: false,
+                        stack: {
+                            'dir1': 'down',
+                            'modal': true,
+                            'firstpos1': 250
+                        },
+                        modules: {
+                            Confirm: {
+                                prompt: true
+                            },
+                            Buttons: {
+                                closer: false,
+                                sticker: false
+                            },
+                            History: {
+                                history: false
+                            },
+                        }
+                    });
+
+                    query_notice.on('pnotify.confirm', function (e) {
+                        if (e.value === "") {
+                            query_notice.cancelClose().update({
+                                title: 'Sorry',
+                                text: 'The Query cannot be null.',
+                                icon: true,
+                                type: 'info',
+                                hide: true,
+                                modules: {
+                                    Confirm: {
+                                        prompt: false,
+                                        confirm: false,
+                                    },
+                                    Buttons: {
+                                        closer: true
+                                    }
+                                }
+                            });
+                        } else if (e.value == null) {
+
+                            stock_id.add(temp_pair[0]);
+                            query.push(temp_pair[1]);
+                            query_notice.cancelClose().update({
+                                title: 'Success',
+                                text: '<p>Add a new Scrapy as below : </p><b>Stock ID : ' + temp_pair[0] + '</b><br><b>Query : ' + temp_pair[1] + '</b>',
+                                textTrusted: true,
+                                icon: true,
+                                type: 'success',
+                                hide: false,
+                                modules: {
+                                    Confirm: {
+                                        prompt: false,
+                                        confirm: false
+                                    },
+                                    Buttons: {
+                                        closer: true
+                                    }
+                                }
+                            });
+
+                        } else {
+                            temp_pair.push(e.value);
+                            query_notice.cancelClose().update({
+                                title: e.value,
+                                text: 'Is it the Query you wanna search for?',
+                                icon: true,
+                                type: 'success',
+                                hide: false,
+                                modules: {
+                                    Confirm: {
+                                        prompt: false,
+                                        confirm: true
+                                    },
+                                    Buttons: {
+                                        closer: true
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    query_notice.on('pnotify.cancel', function (e) {
+                        query_notice.cancelClose().update({
+                            title: 'Sorry',
+                            text: 'You need specify a Query.',
+                            icon: true,
+                            type: 'info',
+                            hide: true,
+                            modules: {
+                                Confirm: {
+                                    prompt: false,
+                                    confirm: false,
+                                },
+                                Buttons: {
+                                    closer: true
+                                }
+                            }
+                        });
+                    });
+
+
+                } else {
+                    v = e.value.toLocaleUpperCase();
+                    if (stock_id.has(v)) {
+                        stock_id_notice.cancelClose().update({
+                            title: 'Sorry',
+                            text: 'Do not add the same Stock ID.',
+                            icon: true,
+                            type: 'info',
+                            hide: true,
+                            modules: {
+                                Confirm: {
+                                    prompt: false,
+                                    confirm: false,
+                                },
+                                Buttons: {
+                                    closer: true
+                                }
+                            }
+                        });
+                    } else {
+                        temp_pair.push(v);
+                        stock_id_notice.cancelClose().update({
+                            title: v,
+                            text: 'Is it the Stock ID you wanna search for?',
+                            icon: true,
+                            type: 'success',
+                            hide: true,
+                            modules: {
+                                Confirm: {
+                                    prompt: false,
+                                    confirm: true
+                                },
+                                Buttons: {
+                                    closer: true
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            stock_id_notice.on('pnotify.cancel', function (e) {
+                stock_id_notice.cancelClose().update({
+                    title: 'Sorry',
+                    text: 'You need specify a Stock ID.',
+                    icon: true,
+                    type: 'info',
+                    hide: true,
+                    modules: {
+                        Confirm: {
+                            prompt: false,
+                            confirm: false,
+                        },
+                        Buttons: {
+                            closer: true
+                        }
+                    }
+                });
+            });
+
+            // window.open('templates/twitter_advance_search.html', "_blank", "scrollbars=yes,alwaysRaised=yes");
         });
 
         $(
@@ -90,7 +308,7 @@
                 fetchData(true);
         }
 
-        function realtime_btn_click() {
+        $('#realtime_btn').click(function () {
             if (isRealtime) {
                 var notice = PNotify.notice({
                     title: 'Notice!',
@@ -99,7 +317,7 @@
                 setTimeout(function () {
                     notice.close();
                 }, 1500);
-                document.getElementById("realtime_btn").style.background = "rgb(198, 85, 109)";
+                document.getElementById("realtime_btn").className = "button button-red";
             }
             else {
                 var notice = PNotify.success({
@@ -109,10 +327,10 @@
                 setTimeout(function () {
                     notice.close();
                 }, 1500);
-                document.getElementById("realtime_btn").style.background = "rgb(85, 198, 121)";
+                document.getElementById("realtime_btn").className = "button button-green";
             }
             isRealtime = !isRealtime;
-        }
+        })
 
         function fetchData(isClick) {
             if (query != "" && query != "undefined" && isRealtime || isClick) {

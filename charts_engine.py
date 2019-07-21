@@ -23,13 +23,15 @@ def index():
     return render_template("charts.html")
 
 
-@app.route("/search", method='GET')
+@app.route("/search", methods=['GET'])
 def get_query():
+    global query, stock_id
     query = request.args.get('q')
 
 
 @app.route("/charts", methods=['POST', 'GET'])
 def get_charts():
+    global query, stock_id
     if request.method == 'POST':
         stock_id = request.form['stock_id']
 
@@ -43,4 +45,4 @@ def get_charts():
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
