@@ -14,11 +14,18 @@ from stock_chart import gen_stock_chart
 from multiprocessing import Process, Queue
 
 app = Flask(__name__, static_folder="templates")
+query = ''
+stock_id = ''
 
 
 @app.route("/")
 def index():
     return render_template("charts.html")
+
+
+@app.route("/search", method='GET')
+def get_query():
+    query = request.args.get('q')
 
 
 @app.route("/charts", methods=['POST', 'GET'])
