@@ -22,20 +22,20 @@ logger = logging.getLogger(__name__)
 
 
 """
-+-----------------+------------+------+-----+---------+-------+
-| Field           | Type       | Null | Key | Default | Extra |
-+-----------------+------------+------+-----+---------+-------+
-| mid             | bigint(20) | NO   | PRI | NULL    |       |
-| type            | mediumtext | NO   |     | NULL    |       |
-| text            | text       | YES  |     | NULL    |       |
-| time            | text       | YES  |     | NULL    |       |
-| userid          | text       | YES  |     | NULL    |       |
-| username        | text       | YES  |     | NULL    |       |
-| reposts_count   | int(11)    | YES  |     | NULL    |       |
-| comments_count  | int(11)    | YES  |     | NULL    |       |
-| attitudes_count | int(11)    | YES  |     | NULL    |       |
-| sentiment       | float      | YES  |     | NULL    |       |
-+-----------------+------------+------+-----+---------+-------+
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| mid             | bigint(20)   | NO   | PRI | NULL    |       |
+| type            | varchar(255) | NO   |     | NULL    |       |
+| text            | varchar(255) | YES  |     | NULL    |       |
+| time            | varchar(255) | YES  |     | NULL    |       |
+| userid          | varchar(255) | YES  |     | NULL    |       |
+| username        | varchar(255) | YES  |     | NULL    |       |
+| reposts_count   | varchar(255) | YES  |     | NULL    |       |
+| comments_count  | varchar(255) | YES  |     | NULL    |       |
+| attitudes_count | varchar(255) | YES  |     | NULL    |       |
+| sentiment       | float        | YES  |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
 """
 
 
@@ -46,7 +46,6 @@ class SavetoMySQLPipeline(object):
     def __init__(self):
         settings = get_project_settings()
         # connect to mysql server
-        self._table = settings['MYSQL_TABLE_NAME']
         db = settings['MYSQL_DB_NAME']
         user = settings['MYSQL_USER']
         passwd = settings['MYSQL_PASSWORD']
@@ -61,22 +60,6 @@ class SavetoMySQLPipeline(object):
             charset='utf8mb4'
         )
         self._cur = self.conn.cursor()
-        sql = """
-            CREATE TABLE IF NOT EXISTS {} (
-                mid BIGINT NOT NULL, 
-                type VARCHAR(255) NOT NULL,
-                text VARCHAR(255),
-                time VARCHAR(255),
-                userid VARCHAR(255),
-                username VARCHAR(255),
-                reposts_count VARCHAR(255),  
-                comments_count VARCHAR(255),
-                attitudes_count VARCHAR(255),
-                sentiment FLOAT,
-                PRIMARY KEY ( mid )
-            ) DEFAULT CHARSET=utf8mb4;      
-            """.format(self._table)
-        self._cur.execute(sql)
 
     def check_vals(self, item):
         ID = item['ID']
@@ -107,6 +90,7 @@ class SavetoMySQLPipeline(object):
         if not ret:
             return None
 
+        table = item['table']
         ID = item['ID']
         user_id = item['user_id']
         text = item['text']
@@ -124,7 +108,7 @@ class SavetoMySQLPipeline(object):
         except Exception as err:
             print(err)
 
-        insert_query = 'INSERT IGNORE INTO ' + self._table + \
+        insert_query = 'INSERT IGNORE INTO ' + table + \
             ' (mid, type, text, time, userid, username, reposts_count, comments_count, attitudes_count, sentiment) '
         insert_query += 'VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
 

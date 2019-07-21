@@ -12,28 +12,30 @@ from TweetScraper.spiders.TweetCrawler import TweetScraper
 from multiprocessing import Process, Queue
 
 
-def catch_pages_history():
+def catch_pages_history(query, stock_id):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
     runner = CrawlerRunner(get_project_settings())
-    runner.crawl(TweetScraper, lang='en', top_tweet=True)
+    runner.crawl(TweetScraper, query=query,
+                 stock_id=stock_id, lang='en', top_tweet=True)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
 
-def catch_pages_realtime():
+def catch_pages_realtime(query, stock_id):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
 
     runner = CrawlerRunner(
         get_project_settings().set("CLOSESPIDER_TIMEOUT", 30))
-    runner.crawl(TweetScraper, lang='en', top_tweet=False)
+    runner.crawl(TweetScraper, query=query,
+                 stock_id=stock_id, lang='en', top_tweet=False)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
 
-def tweet_engine():
-    p = Process(target=catch_pages_history)
+def tweet_engine(query, stock_id):
+    p = Process(target=catch_pages_history, args=(query, stock_id))
     p.start()
 
     while True:
@@ -43,8 +45,8 @@ def tweet_engine():
             except Exception as err:
                 print(err)
         try:
-            p1 = Process(target=catch_pages_realtime)
-            p2 = Process(target=catch_pages_realtime)
+            p1 = Process(target=catch_pages_realtime, args=(query, stock_id))
+            p2 = Process(target=catch_pages_realtime, args=(query, stock_id))
             p1.start()
             time.sleep(15)
             p2.start()
@@ -55,4 +57,7 @@ def tweet_engine():
 
 
 if __name__ == "__main__":
-    catch_pages_history()
+    p = Process(target=catch_pages_history, args=("JD.com", "JD"))
+    p.start()
+    p = Process(target=catch_pages_history, args=("Apple Inc", "AAPL"))
+    p.start()

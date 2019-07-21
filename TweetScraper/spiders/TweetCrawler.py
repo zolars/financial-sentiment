@@ -4,11 +4,15 @@ from scrapy import http
 from scrapy.shell import inspect_response  # for debugging
 from scrapy.utils.project import get_project_settings
 
+# for mysql
+import pymysql
+
 import sys
 import re
 import json
 import time
 import logging
+
 try:
     from urllib import quote  # Python 2.X
 except ImportError:
@@ -25,9 +29,10 @@ class TweetScraper(CrawlSpider):
     name = 'TweetScraper'
     allowed_domains = ['twitter.com']
 
-    def __init__(self, lang='en', crawl_user=False, top_tweet=False):
-        settings = get_project_settings()
-        self.query = settings['QUERY']
+    def __init__(self, query, stock_id, lang='en', crawl_user=False, top_tweet=False):
+        self.query = query
+        self.table = stock_id
+
         self.url = "https://twitter.com/i/search/timeline?l={}".format(
             lang)
         if not top_tweet:
@@ -38,6 +43,39 @@ class TweetScraper(CrawlSpider):
         self.url = self.url + "&q=%s&src=typed&max_position=%s"
 
         self.crawl_user = crawl_user
+
+        # connect to mysql server
+        settings = get_project_settings()
+        db = settings['MYSQL_DB_NAME']
+        user = settings['MYSQL_USER']
+        passwd = settings['MYSQL_PASSWORD']
+        host = 'localhost'
+        port = 3306
+        conn = pymysql.connect(
+            host=host,
+            port=port,
+            db=db,
+            user=user,
+            passwd=passwd,
+            charset='utf8mb4'
+        )
+        sql = """
+            CREATE TABLE IF NOT EXISTS {} (
+                mid BIGINT NOT NULL, 
+                type VARCHAR(255) NOT NULL,
+                text VARCHAR(255),
+                time VARCHAR(255),
+                userid VARCHAR(255),
+                username VARCHAR(255),
+                reposts_count VARCHAR(255),  
+                comments_count VARCHAR(255),
+                attitudes_count VARCHAR(255),
+                sentiment FLOAT,
+                PRIMARY KEY ( mid )
+            ) DEFAULT CHARSET=utf8mb4;      
+            """.format(self.table)
+        conn.cursor().execute(sql)
+        conn.close()
 
     def start_requests(self):
         url = self.url % (quote(self.query), '')
@@ -68,6 +106,8 @@ class TweetScraper(CrawlSpider):
         for item in items:
             try:
                 tweet = Tweet()
+
+                tweet['table'] = self.table
 
                 tweet['usernameTweet'] = item.xpath(
                     './/span[@class="username u-dir u-textTruncate"]/b/text()').extract()[0]

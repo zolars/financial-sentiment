@@ -7,8 +7,11 @@ from jinja2 import Markup, Environment, FileSystemLoader
 from pyecharts import options as opts
 from pyecharts.charts import Page
 
+from tweet_engine import catch_pages_history
 from sentiment_chart import gen_sentiment_chart
 from stock_chart import gen_stock_chart
+
+from multiprocessing import Process, Queue
 
 app = Flask(__name__, static_folder="templates")
 
