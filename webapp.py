@@ -27,6 +27,18 @@ def index():
 @app.route("/search", methods=['GET'])
 def get_query():
     query = request.args.get('q')
+    return ''' 
+            <body style="background:rgb(212, 213, 236);">
+            <br>
+            <br>
+            <br>
+            <h2 align="center">Your query is:</h2>
+            <h1 align="center" style="font-family: Yahei">
+            ''' + query + '''
+            </h1>
+            <h2 align="center">Copy this to the text area.</h2>
+            </body>
+            '''
 
 
 @app.route("/scrapers", methods=['POST', 'GET'])
@@ -38,7 +50,7 @@ def changeScrapers():
         op = request.form['op']
         stock_id = request.form['stock_id']
         query = request.form['query']
-
+        # TODO
     else:
         op = request.args.get('op')
         stock_id = request.args.get('stock_id')
