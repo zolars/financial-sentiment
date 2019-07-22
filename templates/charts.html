@@ -169,33 +169,7 @@
                             stock_id_set.add(temp_pair[0]);
                             query_list.push(temp_pair[1]);
                             query_notice.remove();
-                            showSuccessMsg();
-                            fetchData(true);
-
-                            function showSuccessMsg() {
-                                if (typeof window.stackBarTop === 'undefined') {
-                                    window.stackBarTop = {
-                                        'dir1': 'down',
-                                        'firstpos1': 0,
-                                        'spacing1': 0,
-                                        'push': 'top'
-                                    };
-                                }
-                                var opts = {
-                                    title: 'Add a new Scrapy as below : ',
-                                    text: '<b>Stock ID : ' + temp_pair[0] + '</b><br><b>Query : ' + temp_pair[1] + '</b>',
-                                    textTrusted: true,
-                                    type: 'success',
-                                    addClass: 'stack-bar-top',
-                                    cornerClass: 'ui-pnotify-sharp',
-                                    shadow: false,
-                                    width: '100%',
-                                    stack: window.stackBarTop
-                                };
-
-                                PNotify.alert(opts);
-                            }
-
+                            changeScrapers("add", temp_pair[0], temp_pair[1]);
                         } else {
                             temp_pair.push(e.value);
                             query_notice.cancelClose().update({
@@ -300,6 +274,63 @@
             // window.open('templates/twitter_advance_search.html', "_blank", "scrollbars=yes,alwaysRaised=yes");
         });
 
+        function changeScrapers(op, stock_id, query) {
+
+            function showTopMsg(result) {
+                if (typeof window.stackBarTop === 'undefined') {
+                    window.stackBarTop = {
+                        'dir1': 'down',
+                        'firstpos1': 0,
+                        'spacing1': 0,
+                        'push': 'top'
+                    };
+                }
+                if (result == 'success') {
+                    var opts = {
+                        title: 'Succeed to ' + op + ' a Scrapy as below : ',
+                        text: '<b>Stock ID : ' + stock_id + '</b><br><b>Query : ' + query + '</b>',
+                        textTrusted: true,
+                        type: 'success',
+                        addClass: 'stack-bar-top',
+                        cornerClass: 'ui-pnotify-sharp',
+                        shadow: false,
+                        width: '100%',
+                        stack: window.stackBarTop
+                    };
+                    PNotify.alert(opts);
+                }
+                else {
+                    var opts = {
+                        title: 'Fail to ' + op + ' a Scrapy as below : ',
+                        text: '<b>Stock ID : ' + stock_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
+                        textTrusted: true,
+                        type: 'error',
+                        addClass: 'stack-bar-top',
+                        cornerClass: 'ui-pnotify-sharp',
+                        shadow: false,
+                        width: '100%',
+                        stack: window.stackBarTop
+                    };
+                    PNotify.alert(opts);
+                }
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "http://127.0.0.1:5000/scrapers?op=" + op + "&stock_id=" + stock_id + "&&query=" + query,
+                success: function (result) {
+                    showTopMsg(result)
+                    console.log(result)
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    showTopMsg("Error: " + textStatus)
+                    console.log(XMLHttpRequest.status);
+                    console.log(XMLHttpRequest.readyState);
+                    console.log(textStatus);
+                },
+            });
+        }
+
         $(
             function () {
                 fetchData(false);
@@ -340,11 +371,11 @@
                     count++;
                     $.ajax({
                         type: "GET",
-                        url: "http://127.0.0.1:5000/charts?stock_id=" + stock_id + "&&query=" + query,
+                        url: "http://127.0.0.1:5000/scrapers?op=add&stock_id=" + stock_id + "&&query=" + query,
                         dataType: 'json',
                         success: function (result) {
                             console.log(result)
-                            chart.setOption(result["chart"]);
+                            // chart.setOption(result["chart"]);
                             endLoading(isClick);
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
