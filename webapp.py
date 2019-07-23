@@ -21,7 +21,7 @@ pool = []
 
 @app.route("/")
 def index():
-    return render_template("charts.html")
+    return render_template("index.html")
 
 
 @app.route("/search", methods=['GET'])

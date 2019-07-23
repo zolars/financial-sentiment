@@ -291,8 +291,7 @@ function showScraper(type, modal, title, text) {
                         text: 'MORE',
                         primary: true,
                         click: function (notice) {
-                            alert('show detail');
-                            // var chart = echarts.init($("chart"), 'white', { renderer: 'canvas' });
+                            window.open('templates/charts.html?stock_id=' + title);
                         }
                     },
                     {

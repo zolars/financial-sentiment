@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Sentiment Charts</title>
+
+    <!-- jquery -->
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+
+    <!-- echarts -->
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+    <script src="https://kit.fontawesome.com/9cd8517369.js"></script>
+
+    <!-- button -->
+    <link rel="stylesheet" type="text/css" href="https://codepen.io/jgthms/pen/EjxBdR.css">
+
+    <!-- pnotify -->
+    <script type="text/javascript" src="https://sciactive.com/pnotify/dist/iife/PNotify.js"></script>
+    <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyConfirm.js"></script>
+    <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyButtons.js"></script>
+    <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyStyleMaterial.js"></script>
+    <link href="https://sciactive.com/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet" type="text/css" />
+
+    <!-- import -->
+    <script type="text/javascript" src="templates/index.js"></script>
+    <!-- templates/ -->
+
+    <!-- css  -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* background: rgb(212, 213, 236); */
+            font-weight: 500;
+            font-family: "Microsoft YaHei", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
+        }
+
+        [ui-pnotify].ui-pnotify.stack-bar-top {
+            width: 100%;
+        }
+
+        .middleware {
+            display: block;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .container {
+            margin: 0 auto;
+            margin-top: 25px;
+            /* text-align: center; */
+            border: 1px solid＃000;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+<body background="https://raw.githubusercontent.com/zolars/typora-user-images/master/20190721175825.jpg">
+
+    <h1 align="center" id="header" style="font-family: Cantarell;margin-top: 40px;">
+        Financial Sentiment Charts
+    </h1>
+
+    <div class='middleware'>
+        <button id='search_btn' class="button button-blue" onclick="search();">
+            <i class="fas fa-search"></i>
+            Add a new Scrapy for Twitter.com
+        </button>
+
+        <button id='realtime_btn' class="button button-red" onclick="realtime();">
+            <i class="fas fa-clock"></i>
+            Realtime
+        </button>
+
+        <button id='search_btn' class="button button-yellow"
+            onclick="showScraper('notice', true, 'stock_id', 'Query: yyy');">
+            <i class="fas fa-plus"></i>
+            Add for Test
+        </button>
+    </div>
+
+    <div id="scrapers" class="container" style="position: relative; overflow: auto;">
+
+    </div>
+
+</body>
+
+</html>
