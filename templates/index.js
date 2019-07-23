@@ -108,7 +108,7 @@ function search() {
                         {
                             text: 'Advanced',
                             click: function (notice) {
-                                window.open('templates/twitter_advance_search.html', "_blank", "scrollbars=yes,alwaysRaised=yes");
+                                window.open('https://twitter.com/search-advanced', "_blank", "scrollbars=yes,alwaysRaised=yes");
                             }
                         },
                         {

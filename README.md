@@ -7,18 +7,18 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 ## Usage
 
 1. You need to install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and [MySQL](http://dev.mysql.com/downloads/mysql/) on your computer.
-    ```bash
+    ```
     $ conda -V
     conda 4.6.xx
     ```
 
 2. Get the code from Github clone.
-    ```bash
+    ```
     $ git clone https://github.com/zolars/finanical-sentiment.git
     ```
 
 3. Create the environment.
-    ```bash
+    ```
     $ cd finanical-sentiment
     $ conda create -n finance python=3.6
     $ conda activate finance
@@ -27,7 +27,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```
 
 4. Install dependencies.
-    ```bash
+    ```
     $ conda activate finance
     $ conda install -c conda-forge scrapy
     $ python -m pip install -r requirements.txt
@@ -44,13 +44,23 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```
 
 6. Run the app
-    ```bash
+    ```
     $ cd finanical-sentiment
     $ conda activate finance
     $ python webapp.py
     ```
 
 ## Twitter Advanced Search Options
+
+### How to use 'Advanced Search' to generate query?
+
+1. With this website, input any keywords you want to search for.
+    ![](https://raw.githubusercontent.com/zolars/typora-user-images/master/20190724022657.png)
+2. Click 'Search for' button.
+3. In the new page, copy the query you need as below:
+    ![](https://raw.githubusercontent.com/zolars/typora-user-images/master/20190724023017.png)
+
+### Code Options
 
 | Operator                               | Finds tweets...                                                           |
 | -------------------------------------- | ------------------------------------------------------------------------- |
