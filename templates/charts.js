@@ -1,5 +1,5 @@
 // var chart = echarts.init($("chart"), 'white', { renderer: 'canvas' });
-var query_list = [];
+
 var stock_id_set = new Set();
 var isRealtime = false;
 var percent = 0;
@@ -243,22 +243,7 @@ function changeScrapers(op, stock_id, query) {
                 'push': 'top'
             };
         }
-        if (result == 'success') {
-            var opts = {
-                title: 'Succeed to ' + op + ' a Scrapy as below : ',
-                text: '<b>Stock ID : ' + stock_id + '</b><br><b>Query : ' + query + '</b>',
-                textTrusted: true,
-                type: 'success',
-                addClass: 'stack-bar-top',
-                cornerClass: 'ui-pnotify-sharp',
-                shadow: false,
-                width: '100%',
-                stack: window.stackBarTop
-            };
-            PNotify.alert(opts);
-            document.getElementById("tables").innerHTML = stock_id_set + "<br>" + query_list;
-        }
-        else {
+        if (result != 'success' && op != 'get') {
             var opts = {
                 title: 'Fail to ' + op + ' a Scrapy as below : ',
                 text: '<b>Stock ID : ' + stock_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
@@ -281,9 +266,15 @@ function changeScrapers(op, stock_id, query) {
             showTopMsg(result)
             if (op == 'add') {
                 stock_id_set.add(stock_id);
-                query_list.push(query);
+                showScraper('notice', true, stock_id, 'Query: ' + query);
             } else if (op == 'remove') {
-                // TODO
+                stock_id_set.delete(stock_id);
+            } else if (op == 'get') {
+                result = $.parseJSON(result)
+                for (var stock_id_temp in result) {
+                    stock_id_set.add(stock_id_temp);
+                    showScraper('notice', true, stock_id_temp, 'Query: ' + result[stock_id_temp]);
+                }
             }
             console.log(result)
         },
@@ -292,22 +283,7 @@ function changeScrapers(op, stock_id, query) {
             console.log(XMLHttpRequest.status);
             console.log(XMLHttpRequest.readyState);
             console.log(textStatus);
-        },
-    });
-}
-
-function fetchQuery() {
-    $.ajax({
-        type: "GET",
-        url: "http://127.0.0.1:5000/scrapers?op=get&stock_id=0&query=0",
-        success: function (result) {
-            console.log(result)
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            console.log(XMLHttpRequest.status);
-            console.log(XMLHttpRequest.readyState);
-            console.log(textStatus);
-        },
+        }
     });
 }
 
@@ -316,11 +292,10 @@ function fetchData(isClick) {
         beginLoading(isClick);
         count = 0;
         for (var stock_id of stock_id_set) {
-            query = query_list[count];
             count++;
             $.ajax({
                 type: "GET",
-                url: "http://127.0.0.1:5000/scrapers?op=add&stock_id=" + stock_id + "&&query=" + query,
+                url: "http://127.0.0.1:5000/scrapers?op=add&stock_id=" + stock_id,
                 dataType: 'json',
                 success: function (result) {
                     console.log(result)
@@ -439,15 +414,8 @@ function errorLoading(isClick) {
     }
 }
 
-$(
-    function () {
-        fetchQuery();
-        fetchData(false);
-        setInterval(fetchData, 10000);
-    }
-);
-
-window.showScraper = function showScraper(type, modal) {
+function showScraper(type, modal, title, text) {
+    PNotify.defaults.styling = 'material';
     if (typeof window.stackContextModal === 'undefined') {
         window.stackContextModal = {
             'dir1': 'down',
@@ -458,8 +426,8 @@ window.showScraper = function showScraper(type, modal) {
         };
     }
     var opts = {
-        title: 'Over Here',
-        text: "Check me out. I'm in a different stack.",
+        title: title,
+        text: text,
         hide: false,
         stack: window.stackContextModal,
         type: 'info',
@@ -471,10 +439,41 @@ window.showScraper = function showScraper(type, modal) {
             },
             Mobile: {
                 swipeDismiss: false
+            },
+            Confirm: {
+                confirm: true,
+                buttons: [
+                    {
+                        text: 'MORE',
+                        primary: true,
+                        click: function (notice) {
+                            alert('show detail'); // TODO
+                        }
+                    },
+                    {
+                        text: 'Close',
+                        primary: true,
+                        click: function (notice) {
+                            changeScrapers('remove', notice.options.data.title, "");
+                            notice.close();
+                        }
+                    }
+                ]
+            },
+            History: {
+                history: false
             }
         }
     };
 
     PNotify.notice(opts);
-
+    PNotify.defaults.styling = 'brighttheme';
 };
+
+$(
+    function () {
+        changeScrapers('get', '', '')
+        fetchData(false);
+        setInterval(fetchData, 10000);
+    }
+);

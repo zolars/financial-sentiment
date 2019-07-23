@@ -27,7 +27,7 @@ def index():
 @app.route("/search", methods=['GET'])
 def get_query():
     query = request.args.get('q')
-    return ''' 
+    return '''
             <body style="background:rgb(212, 213, 236);">
             <br>
             <br>
@@ -41,19 +41,11 @@ def get_query():
             '''
 
 
-@app.route("/scrapers", methods=['POST', 'GET'])
+@app.route("/scrapers", methods=['GET'])
 def changeScrapers():
-
     global stock_id_set, query_list
 
-    if request.method == 'POST':
-        op = request.form['op']
-        stock_id = request.form['stock_id']
-        query = request.form['query']
-    else:
-        op = request.args.get('op')
-        stock_id = request.args.get('stock_id')
-        query = request.args.get('query')
+    op = request.args.get('op')
 
     if op == 'get':
         result = {}
@@ -62,6 +54,8 @@ def changeScrapers():
         return json.dumps(result)
 
     elif op == 'add':
+        stock_id = request.args.get('stock_id')
+        query = request.args.get('query')
         if len(stock_id_set) >= 6:
             return 'Error: The amount of scrapers is up to 6.'
         elif stock_id in stock_id_set:
@@ -75,6 +69,7 @@ def changeScrapers():
             return 'success'
 
     elif op == 'remove':
+        stock_id = request.args.get('stock_id')
         if stock_id not in stock_id_set:
             return 'Error: The stock_id is not existed.'
         else:

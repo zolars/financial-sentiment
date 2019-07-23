@@ -20,8 +20,11 @@
     <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyConfirm.js"></script>
     <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyButtons.js"></script>
     <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyStyleMaterial.js"></script>
-    <script>PNotify.defaults.styling = 'material';</script>
     <link href="https://sciactive.com/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet" type="text/css" />
+
+    <!-- import -->
+    <script type="text/javascript" src="templates/charts.js"></script>
+    <!-- templates/ -->
 
     <!-- css  -->
     <style>
@@ -61,9 +64,6 @@
 
 <body background="https://raw.githubusercontent.com/zolars/typora-user-images/master/20190721175825.jpg">
 
-    <!-- import -->
-    <script type="text/javascript" src="charts.js"></script>
-
     <h1 align="center" id="header" style="font-family: Cantarell;margin-top: 40px;">
         Financial Sentiment Charts
     </h1>
@@ -79,9 +79,11 @@
             Realtime
         </button>
 
-        <button class="button button-yellow" onclick="
-                          showScraper('notice',true);
-                        ">Notice</button>
+        <button id='search_btn' class="button button-yellow"
+            onclick="showScraper('notice', true, 'stock_id', 'Query: yyy');">
+            <i class="fas fa-plus"></i>
+            Add for Test
+        </button>
     </div>
 
     <div id="scrapers" class="container" style="position: relative; overflow: auto;">
