@@ -50,15 +50,20 @@ def changeScrapers():
         op = request.form['op']
         stock_id = request.form['stock_id']
         query = request.form['query']
-        # TODO
     else:
         op = request.args.get('op')
         stock_id = request.args.get('stock_id')
         query = request.args.get('query')
 
-    if op == 'add':
-        if len(stock_id_set) >= 4:
-            return 'Error: The amount of scrapers is up to 4.'
+    if op == 'get':
+        result = {}
+        for (stock_id, query) in zip(stock_id_set, query_list):
+            result[stock_id] = query
+        return json.dumps(result)
+
+    elif op == 'add':
+        if len(stock_id_set) >= 6:
+            return 'Error: The amount of scrapers is up to 6.'
         elif stock_id in stock_id_set:
             return 'Error: The stock_id is duplicated.'
         else:
@@ -90,9 +95,6 @@ def get_charts():
     else:
         stock_id = request.args.get('stock_id')
         query = request.args.get('query')
-
-    # p = Process(target=catch_pages_history, args=(query, stock_id))
-    # p.start()
 
     sentiment_chart, startdate, enddate = gen_sentiment_chart(stock_id)
     stock_chart = gen_stock_chart(stock_id, startdate, enddate)
