@@ -43,28 +43,14 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     Database changed
     ```
 
-6. Modify the configuration.
-
-    Modify the keywords `QUERY` and `MYSQL_TABLE_NAME` in `TweetScraper/settings.py`. 
-    
-7. Run the app
+6. Run the app
     ```bash
     $ cd finanical-sentiment
     $ conda activate finance
-    $ python tweet_engine.py
+    $ python webapp.py
     ```
 
-    ```bash
-    $ cd finanical-sentiment
-    $ conda activate finance
-    $ python charts_engine.py
-    ```
-
-## Configuration
-
-### Twitter Spider
-
-* The `QUERY` is the keyword for twitter search and the advanced search table is as below:
+## Twitter Advanced Search Options
 
 | Operator                               | Finds tweets...                                                           |
 | -------------------------------------- | ------------------------------------------------------------------------- |
@@ -85,14 +71,6 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 | traffic **?**                          | containing "traffic" and asking a question.                               |
 | hilarious **filter:links**             | containing "hilarious" and linking to URLs.                               |
 | news **source:twitterfeed**            | containing "news" and entered via TwitterFeed                             |
-
-* The `MYSQL_TABLE_NAME` keyword is as same as the stock code. For example:
-
-```
-MYSQL_TABLE_NAME = "GOOG"
-```
-
-### Weibo Spider
 
 ## Requirements
 
