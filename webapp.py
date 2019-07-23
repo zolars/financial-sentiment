@@ -85,11 +85,9 @@ def changeScrapers():
 def get_charts():
     if request.method == 'POST':
         stock_id = request.form['stock_id']
-        query = request.form['query']
 
     else:
         stock_id = request.args.get('stock_id')
-        query = request.args.get('query')
 
     sentiment_chart, startdate, enddate = gen_sentiment_chart(stock_id)
     stock_chart = gen_stock_chart(stock_id, startdate, enddate)

@@ -1,8 +1,4 @@
-// var chart = echarts.init($("chart"), 'white', { renderer: 'canvas' });
-
 var stock_id_set = new Set();
-var isRealtime = false;
-var percent = 0;
 
 function search() {
     var temp_pair = []
@@ -208,32 +204,7 @@ function search() {
     });
 }
 
-function realtime() {
-    if (isRealtime) {
-        var notice = PNotify.notice({
-            title: 'Notice!',
-            text: 'Realtime Refresh has been stopped!'
-        });
-        setTimeout(function () {
-            notice.close();
-        }, 1500);
-        document.getElementById("realtime_btn").className = "button button-red";
-    }
-    else {
-        var notice = PNotify.success({
-            title: 'Notice!',
-            text: 'Realtime Refresh has been started!'
-        });
-        setTimeout(function () {
-            notice.close();
-        }, 1500);
-        document.getElementById("realtime_btn").className = "button button-green";
-    }
-    isRealtime = !isRealtime;
-}
-
 function changeScrapers(op, stock_id, query) {
-
     function showTopMsg(result) {
         if (typeof window.stackBarTop === 'undefined') {
             window.stackBarTop = {
@@ -287,133 +258,6 @@ function changeScrapers(op, stock_id, query) {
     });
 }
 
-function fetchData(isClick) {
-    if (isRealtime || isClick) {
-        beginLoading(isClick);
-        count = 0;
-        for (var stock_id of stock_id_set) {
-            count++;
-            $.ajax({
-                type: "GET",
-                url: "http://127.0.0.1:5000/scrapers?op=add&stock_id=" + stock_id,
-                dataType: 'json',
-                success: function (result) {
-                    console.log(result)
-                    // chart.setOption(result["chart"]);
-                    endLoading(isClick);
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    errorLoading(isClick);
-                    console.log(XMLHttpRequest.status);
-                    console.log(XMLHttpRequest.readyState);
-                    console.log(textStatus);
-                },
-            });
-        }
-    }
-}
-
-function loading() {
-    percent = 0;
-    PNotify.defaults.icons = 'fontawesome5';
-    window.loading_notice = PNotify.info({
-        text: 'Please Wait',
-        icon: 'fas fa-cog fa-spin',
-        addClass: 'custom',
-        hide: false,
-        shadow: false,
-        stack: {
-            'modal': true,
-            'overlayClose': false
-        },
-        modules: {
-            Buttons: {
-                closer: false,
-                sticker: false
-            }
-        }
-    });
-
-    setTimeout(function () {
-        window.loading_notice.update({
-            title: false
-        });
-        var interval = setInterval(function () {
-            var options = {
-                text: percent + '% complete.'
-            };
-            if (percent < 0) {
-                window.clearInterval(interval);
-                options.title = 'Error!';
-                options.type = 'error';
-                options.text = 'Please check the data source...'
-                options.hide = true;
-                options.icon = 'fas fa-exclamation-triangle';
-                options.shadow = true;
-                options.width = PNotify.defaults.width;
-                options.modules = {
-                    Buttons: {
-                        closer: true,
-                        sticker: false
-                    }
-                };
-            }
-            if (percent >= 0 && percent < 80) {
-                options.title = 'Loading...';
-            }
-            if (percent === 80) {
-                options.title = 'Almost There...';
-                percent -= 2;
-            }
-            if (percent >= 100) {
-                window.clearInterval(interval);
-                options.title = 'Done!';
-                options.type = 'success';
-                options.hide = true;
-                options.icon = 'fas fa-check';
-                options.shadow = true;
-                options.width = PNotify.defaults.width;
-                options.modules = {
-                    Buttons: {
-                        closer: true,
-                        sticker: false
-                    }
-                };
-            }
-            window.loading_notice.update(options);
-            percent += 2;
-        }, 120);
-    }, 2000);
-}
-
-function beginLoading(isClick) {
-    if (isClick) {
-        percent = 0;
-        loading();
-    }
-}
-
-function endLoading(isClick) {
-    if (isClick) {
-        percent = 100;
-    } else {
-        percent = 100;
-        var notice = PNotify.success({
-            title: 'Success!',
-            text: 'Chart has been refreshed just now!'
-        });
-        setTimeout(function () {
-            notice.close();
-        }, 5000);
-    }
-}
-
-function errorLoading(isClick) {
-    if (isClick) {
-        percent = -1;
-    }
-}
-
 function showScraper(type, modal, title, text) {
     PNotify.defaults.styling = 'material';
     if (typeof window.stackContextModal === 'undefined') {
@@ -447,7 +291,8 @@ function showScraper(type, modal, title, text) {
                         text: 'MORE',
                         primary: true,
                         click: function (notice) {
-                            alert('show detail'); // TODO
+                            alert('show detail');
+                            // var chart = echarts.init($("chart"), 'white', { renderer: 'canvas' });
                         }
                     },
                     {
@@ -472,8 +317,6 @@ function showScraper(type, modal, title, text) {
 
 $(
     function () {
-        changeScrapers('get', '', '')
-        fetchData(false);
-        setInterval(fetchData, 10000);
+        changeScrapers('get', '', '');
     }
 );
