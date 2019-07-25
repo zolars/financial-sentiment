@@ -3,6 +3,8 @@ pymysql
 tqdm
 emoji
 tiingo[pandas]
+openpyxl
+pandas
 pyecharts
 textblob
 flask

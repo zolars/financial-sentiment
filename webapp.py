@@ -1,4 +1,3 @@
-import sys
 import json
 import datetime as dt
 
@@ -8,8 +7,8 @@ from pyecharts import options as opts
 from pyecharts.charts import Page
 
 from tweet_engine import catch_pages_history
-from sentiment_chart import gen_sentiment_chart
-from stock_chart import gen_stock_chart
+from sentiment_chart import gen_sentiment_chart, out_sentiment_excel
+from stock_chart import gen_stock_chart, out_stock_excel
 
 from multiprocessing import Process, Queue
 
@@ -90,6 +89,21 @@ def get_charts():
         stock_id = request.args.get('stock_id')
 
     sentiment_chart, startdate, enddate = gen_sentiment_chart(stock_id)
+    stock_chart = gen_stock_chart(stock_id, startdate, enddate)
+    sentiment_chart.overlap(stock_chart)
+    return json.dumps({"chart": json.loads(sentiment_chart.dump_options())})
+
+
+@app.route("/export", methods=['POST', 'GET'])
+def export_charts():
+    if request.method == 'POST':
+        stock_id = request.form['stock_id']
+
+    else:
+        stock_id = request.args.get('stock_id')
+    out_sentiment_excel(stock_id)
+    sentiment_chart, startdate, enddate = gen_sentiment_chart(stock_id)
+    out_stock_excel(stock_id, startdate, enddate)
     stock_chart = gen_stock_chart(stock_id, startdate, enddate)
     sentiment_chart.overlap(stock_chart)
     return json.dumps({"chart": json.loads(sentiment_chart.dump_options())})

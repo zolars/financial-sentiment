@@ -26,6 +26,11 @@ class MySQL:
     def __del__(self):
         self._conn.close()
 
+    def searchAll(self):
+        sql = 'select time, mid, type, text, userid, username, reposts_count, comments_count, attitudes_count, sentiment from ' + self._table
+        df = pd.read_sql(sql, con=self._conn)
+        return df
+
     def searchSentiment(self):
         sql = 'select time, sentiment from ' + self._table   # + ' where sentiment!=0'
         df = pd.read_sql(sql, con=self._conn)
@@ -90,8 +95,14 @@ def gen_sentiment_chart(table):
     return sentiment_chart, df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
 
 
-def getTweets():
-    pass
+def out_sentiment_excel(table):
+    df = MySQL(table).searchAll()
+    df['time'] = pd.to_datetime(df['time'])
+    df = df.set_index('time')
+    file_path = './out/' + table + '_sentiment.xlsx'
+    writer = pd.ExcelWriter(file_path)
+    df.to_excel(writer, encoding='utf-8')
+    writer.save()
 
 
 if __name__ == "__main__":

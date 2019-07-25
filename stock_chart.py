@@ -44,7 +44,6 @@ def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetim
                               startDate='{:%Y-%m-%d}'.format(startdate),
                               endDate='{:%Y-%m-%d}'.format(enddate))
     df = df.loc[:, ['open', 'close', 'low', 'high']]
-    # df = df.resample('w').mean()
 
     data = np.array(df).tolist()
 
@@ -53,6 +52,21 @@ def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetim
         index.append("{:%Y-%m-%d}".format(i.to_pydatetime()))
     c = kline_datazoom_slider_position(index, data, query)
     return c
+
+
+def out_stock_excel(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
+    config = {'api_key': '138fd2efede60c466126add93ebf585fc5492f75'}
+    client = TiingoClient(config)
+
+    df = client.get_dataframe(query,
+                              frequency='daily',
+                              startDate='{:%Y-%m-%d}'.format(startdate),
+                              endDate='{:%Y-%m-%d}'.format(enddate))
+
+    file_path = './out/' + query + '_stock.xlsx'
+    writer = pd.ExcelWriter(file_path)
+    df.to_excel(writer, encoding='utf-8')
+    writer.save()
 
 
 if __name__ == "__main__":
