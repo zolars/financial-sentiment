@@ -48,31 +48,31 @@ def changeScrapers():
 
     if op == 'get':
         result = {}
-        for (stock_id, query) in zip(stock_id_set, query_list):
-            result[stock_id] = query
+        for (item_id, query) in zip(stock_id_set, query_list):
+            result[item_id] = query
         return json.dumps(result)
 
     elif op == 'add':
-        stock_id = request.args.get('stock_id')
+        item_id = request.args.get('item_id')
         query = request.args.get('query')
         if len(stock_id_set) >= 6:
             return 'Error: The amount of scrapers is up to 6.'
-        elif stock_id in stock_id_set:
-            return 'Error: The stock_id is duplicated.'
+        elif item_id in stock_id_set:
+            return 'Error: The item_id is duplicated.'
         else:
-            stock_id_set.append(stock_id)
+            stock_id_set.append(item_id)
             query_list.append(query)
-            p = Process(target=catch_pages_history, args=(query, stock_id))
+            p = Process(target=catch_pages_history, args=(query, item_id))
             pool.append(p)
             pool[-1].start()
             return 'success'
 
     elif op == 'remove':
-        stock_id = request.args.get('stock_id')
-        if stock_id not in stock_id_set:
-            return 'Error: The stock_id is not existed.'
+        item_id = request.args.get('item_id')
+        if item_id not in stock_id_set:
+            return 'Error: The item_id is not existed.'
         else:
-            index = stock_id_set.index(stock_id)
+            index = stock_id_set.index(item_id)
             del stock_id_set[index]
             del query_list[index]
             pool[index].terminate()
@@ -83,13 +83,13 @@ def changeScrapers():
 @app.route("/charts", methods=['POST', 'GET'])
 def get_charts():
     if request.method == 'POST':
-        stock_id = request.form['stock_id']
+        item_id = request.form['item_id']
 
     else:
-        stock_id = request.args.get('stock_id')
+        item_id = request.args.get('item_id')
 
-    sentiment_chart, startdate, enddate = gen_sentiment_chart(stock_id)
-    stock_chart = gen_stock_chart(stock_id, startdate, enddate)
+    sentiment_chart, startdate, enddate = gen_sentiment_chart(item_id)
+    stock_chart = gen_stock_chart(item_id, startdate, enddate)
     sentiment_chart.overlap(stock_chart)
     return json.dumps({"chart": json.loads(sentiment_chart.dump_options())})
 
@@ -97,14 +97,14 @@ def get_charts():
 @app.route("/export", methods=['POST', 'GET'])
 def export_charts():
     if request.method == 'POST':
-        stock_id = request.form['stock_id']
+        item_id = request.form['item_id']
 
     else:
-        stock_id = request.args.get('stock_id')
-    out_sentiment_excel(stock_id)
-    sentiment_chart, startdate, enddate = gen_sentiment_chart(stock_id)
-    out_stock_excel(stock_id, startdate, enddate)
-    stock_chart = gen_stock_chart(stock_id, startdate, enddate)
+        item_id = request.args.get('item_id')
+    out_sentiment_excel(item_id)
+    sentiment_chart, startdate, enddate = gen_sentiment_chart(item_id)
+    out_stock_excel(item_id, startdate, enddate)
+    stock_chart = gen_stock_chart(item_id, startdate, enddate)
     sentiment_chart.overlap(stock_chart)
     return json.dumps({"chart": json.loads(sentiment_chart.dump_options())})
 

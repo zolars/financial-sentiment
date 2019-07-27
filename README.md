@@ -20,7 +20,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 3. Create the environment.
     ```
     $ cd finanical-sentiment
-    $ conda create -n finance python=3.6
+    $ conda env create -f environment.yml
     $ conda activate finance
     $ python -V
     Python 3.6.8 :: Anaconda, Inc. 
@@ -28,9 +28,6 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 
 4. Install dependencies.
     ```
-    $ conda activate finance
-    $ conda install -c conda-forge scrapy
-    $ python -m pip install -r requirements.txt
     $ python -m textblob.download_corpora
     ```
 
@@ -47,7 +44,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```
     $ cd finanical-sentiment
     $ conda activate finance
-    $ python webapp.py
+    $ python app.py
     ```
 
 ## Twitter Advanced Search Options

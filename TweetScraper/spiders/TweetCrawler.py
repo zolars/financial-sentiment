@@ -29,9 +29,9 @@ class TweetScraper(CrawlSpider):
     name = 'TweetScraper'
     allowed_domains = ['twitter.com']
 
-    def __init__(self, query, stock_id, lang='en', crawl_user=False, top_tweet=False):
+    def __init__(self, query, item_id, lang='en', crawl_user=False, top_tweet=False):
         self.query = query
-        self.table = stock_id
+        self.table = item_id
 
         self.url = "https://twitter.com/i/search/timeline?l={}".format(
             lang)

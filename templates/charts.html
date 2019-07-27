@@ -84,7 +84,7 @@
   <script>
     var chart = echarts.init(document.getElementById('chart'), 'white', { renderer: 'canvas' });
 
-    var stock_id = "";
+    var item_id = "";
     var isRealtime = false;
     var percent = 0;
 
@@ -108,11 +108,11 @@
     }
 
     function search_btn_click() {
-      stock_id = getKeyVariable('stock_id');
-      if (stock_id === "") {
+      item_id = getKeyVariable('item_id');
+      if (item_id === "") {
         var notice = PNotify.error({
           title: 'Error!',
-          text: 'Please check the stock_id you want to search for!'
+          text: 'Please check the item_id you want to search for!'
         });
         setTimeout(function () {
           notice.close();
@@ -147,11 +147,11 @@
     }
 
     function export_btn_click() {
-      stock_id = getKeyVariable('stock_id');
-      if (stock_id === "") {
+      item_id = getKeyVariable('item_id');
+      if (item_id === "") {
         var notice = PNotify.error({
           title: 'Error!',
-          text: 'Please check the stock_id you want to search for!'
+          text: 'Please check the item_id you want to search for!'
         });
         setTimeout(function () {
           notice.close();
@@ -162,11 +162,11 @@
     }
 
     function fetchData(isClick) {
-      if (stock_id != "" && stock_id != "undefined" && isRealtime || isClick) {
+      if (item_id != "" && item_id != "undefined" && isRealtime || isClick) {
         beginLoading(isClick);
         $.ajax({
           type: "GET",
-          url: "http://127.0.0.1:5000/charts?stock_id=" + stock_id,
+          url: "http://127.0.0.1:5000/charts?item_id=" + item_id,
           dataType: 'json',
           success: function (result) {
             console.log(result)
@@ -184,11 +184,11 @@
     }
 
     function exportData() {
-      if (stock_id != "" && stock_id != "undefined") {
+      if (item_id != "" && item_id != "undefined") {
         beginLoading(true);
         $.ajax({
           type: "GET",
-          url: "http://127.0.0.1:5000/export?stock_id=" + stock_id,
+          url: "http://127.0.0.1:5000/export?item_id=" + item_id,
           dataType: 'json',
           success: function (result) {
             console.log(result)

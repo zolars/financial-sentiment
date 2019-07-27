@@ -12,30 +12,30 @@ from TweetScraper.spiders.TweetCrawler import TweetScraper
 from multiprocessing import Process, Queue
 
 
-def catch_pages_history(query, stock_id):
+def catch_pages_history(query, item_id):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
     runner = CrawlerRunner(get_project_settings())
     runner.crawl(TweetScraper, query=query,
-                 stock_id=stock_id, lang='en', top_tweet=True)
+                 item_id=item_id, lang='en', top_tweet=True)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
 
-def catch_pages_realtime(query, stock_id):
+def catch_pages_realtime(query, item_id):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
 
-    runner = CrawlerRunner(
-        get_project_settings().set("CLOSESPIDER_TIMEOUT", 30))
+    runner = CrawlerRunner(get_project_settings())
+    # .set("CLOSESPIDER_TIMEOUT", 30)
     runner.crawl(TweetScraper, query=query,
-                 stock_id=stock_id, lang='en', top_tweet=False)
+                 item_id=item_id, lang='en', top_tweet=False)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
 
-def tweet_engine(query, stock_id):
-    p = Process(target=catch_pages_history, args=(query, stock_id))
+def tweet_engine(query, item_id):
+    p = Process(target=catch_pages_history, args=(query, item_id))
     p.start()
 
     while True:
@@ -45,8 +45,8 @@ def tweet_engine(query, stock_id):
             except Exception as err:
                 print(err)
         try:
-            p1 = Process(target=catch_pages_realtime, args=(query, stock_id))
-            p2 = Process(target=catch_pages_realtime, args=(query, stock_id))
+            p1 = Process(target=catch_pages_realtime, args=(query, item_id))
+            p2 = Process(target=catch_pages_realtime, args=(query, item_id))
             p1.start()
             time.sleep(15)
             p2.start()
@@ -57,7 +57,7 @@ def tweet_engine(query, stock_id):
 
 
 if __name__ == "__main__":
-    p = Process(target=catch_pages_history, args=("JD.com", "JD"))
+    p = Process(target=catch_pages_realtime, args=("JD.com", "JD"))
     p.start()
-    p = Process(target=catch_pages_history, args=("Apple Inc", "AAPL"))
+    p = Process(target=catch_pages_realtime, args=("Apple Inc", "AAPL"))
     p.start()

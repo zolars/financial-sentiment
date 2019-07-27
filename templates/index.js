@@ -204,7 +204,7 @@ function search() {
   });
 }
 
-function changeScrapers(op, stock_id, query) {
+function changeScrapers(op, item_id, query) {
   function showTopMsg(result) {
     if (typeof window.stackBarTop === 'undefined') {
       window.stackBarTop = {
@@ -217,7 +217,7 @@ function changeScrapers(op, stock_id, query) {
     if (result != 'success' && op != 'get') {
       var opts = {
         title: 'Fail to ' + op + ' a Scrapy as below : ',
-        text: '<b>Stock ID : ' + stock_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
+        text: '<b>Stock ID : ' + item_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
         textTrusted: true,
         type: 'error',
         addClass: 'stack-bar-top',
@@ -232,14 +232,14 @@ function changeScrapers(op, stock_id, query) {
 
   $.ajax({
     type: "GET",
-    url: "http://127.0.0.1:5000/scrapers?op=" + op + "&stock_id=" + stock_id + "&&query=" + query,
+    url: "http://127.0.0.1:5000/scrapers?op=" + op + "&item_id=" + item_id + "&&query=" + query,
     success: function (result) {
       showTopMsg(result)
       if (op == 'add') {
-        stock_id_set.add(stock_id);
-        showScraper('notice', true, stock_id, 'Query: ' + query);
+        stock_id_set.add(item_id);
+        showScraper('notice', true, item_id, 'Query: ' + query);
       } else if (op == 'remove') {
-        stock_id_set.delete(stock_id);
+        stock_id_set.delete(item_id);
       } else if (op == 'get') {
         result = $.parseJSON(result)
         for (var stock_id_temp in result) {
@@ -291,7 +291,7 @@ function showScraper(type, modal, title, text) {
             text: 'MORE',
             primary: true,
             click: function (notice) {
-              window.open('templates/charts.html?stock_id=' + title);
+              window.open('templates/charts.html?item_id=' + title);
             }
           },
           {

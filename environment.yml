@@ -1,0 +1,17 @@
+name: finance
+dependencies:
+  - python=3.6
+  - scrapy
+  - pip:
+    - requests
+    - pymysql
+    - tqdm
+    - emoji
+    - tiingo[pandas]
+    - openpyxl
+    - pandas
+    - pyecharts
+    - textblob
+    - flask
+    - pylint
+    - autopep8
