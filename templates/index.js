@@ -1,10 +1,10 @@
-var stock_id_set = new Set();
+var item_id_set = new Set();
 
-function search() {
+function search(type) {
   var temp_pair = []
-  var stock_id_notice = PNotify.notice({
-    title: 'Stock ID Needed',
-    text: 'Please input the Stock ID : ',
+  var item_id_notice = PNotify.notice({
+    title: type + ' ID Needed',
+    text: 'Please input the ' + type + ' ID : ',
     icon: 'fas fa-question-circle',
     hide: false,
     stack: {
@@ -26,11 +26,11 @@ function search() {
     }
   });
 
-  stock_id_notice.on('pnotify.confirm', function (e) {
+  item_id_notice.on('pnotify.confirm', function (e) {
     if (e.value === "") {
-      stock_id_notice.cancelClose().update({
+      item_id_notice.cancelClose().update({
         title: 'Sorry',
-        text: 'The Stock ID cannot be null.',
+        text: 'The ' + type + ' ID cannot be null.',
         icon: true,
         type: 'info',
         hide: true,
@@ -145,10 +145,10 @@ function search() {
 
     } else {
       v = e.value.toLocaleUpperCase();
-      if (stock_id_set.has(v)) {
-        stock_id_notice.cancelClose().update({
+      if (item_id_set.has(v)) {
+        item_id_notice.cancelClose().update({
           title: 'Sorry',
-          text: 'Do not add the same Stock ID.',
+          text: 'Do not add the same ' + type + ' ID.',
           icon: true,
           type: 'info',
           hide: true,
@@ -164,9 +164,9 @@ function search() {
         });
       } else {
         temp_pair.push(v);
-        stock_id_notice.cancelClose().update({
+        item_id_notice.cancelClose().update({
           title: v,
-          text: 'Is it the Stock ID you wanna search for?',
+          text: 'Is it the ' + type + ' ID you wanna search for?',
           icon: true,
           type: 'success',
           hide: true,
@@ -184,10 +184,10 @@ function search() {
     }
   });
 
-  stock_id_notice.on('pnotify.cancel', function (e) {
-    stock_id_notice.cancelClose().update({
+  item_id_notice.on('pnotify.cancel', function (e) {
+    item_id_notice.cancelClose().update({
       title: 'Sorry',
-      text: 'You need specify a Stock ID.',
+      text: 'You need specify a ' + type + ' ID.',
       icon: true,
       type: 'info',
       hide: true,
@@ -217,7 +217,7 @@ function changeScrapers(op, item_id, query) {
     if (result != 'success' && op != 'get') {
       var opts = {
         title: 'Fail to ' + op + ' a Scrapy as below : ',
-        text: '<b>Stock ID : ' + item_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
+        text: '<b>' + type + ' ID : ' + item_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
         textTrusted: true,
         type: 'error',
         addClass: 'stack-bar-top',
@@ -236,15 +236,15 @@ function changeScrapers(op, item_id, query) {
     success: function (result) {
       showTopMsg(result)
       if (op == 'add') {
-        stock_id_set.add(item_id);
-        showScraper('notice', true, item_id, 'Query: ' + query);
+        item_id_set.add(item_id);
+        showScraper('notice', item_id, 'Query: ' + query);
       } else if (op == 'remove') {
-        stock_id_set.delete(item_id);
+        item_id_set.delete(item_id);
       } else if (op == 'get') {
         result = $.parseJSON(result)
-        for (var stock_id_temp in result) {
-          stock_id_set.add(stock_id_temp);
-          showScraper('notice', true, stock_id_temp, 'Query: ' + result[stock_id_temp]);
+        for (var item_id_temp in result) {
+          item_id_set.add(item_id_temp);
+          showScraper('notice', item_id_temp, 'Query: ' + result[item_id_temp]);
         }
       }
       console.log(result)
@@ -258,7 +258,7 @@ function changeScrapers(op, item_id, query) {
   });
 }
 
-function showScraper(type, modal, title, text) {
+function showScraper(type, title, text) {
   PNotify.defaults.styling = 'material';
   if (typeof window.stackContextModal === 'undefined') {
     window.stackContextModal = {

@@ -13,7 +13,7 @@ from stock_chart import gen_stock_chart, out_stock_excel
 from multiprocessing import Process, Queue
 
 app = Flask(__name__, static_folder="templates")
-stock_id_set = []
+item_id_set = []
 query_list = []
 pool = []
 
@@ -42,25 +42,25 @@ def get_query():
 
 @app.route("/scrapers", methods=['GET'])
 def changeScrapers():
-    global stock_id_set, query_list
+    global item_id_set, query_list
 
     op = request.args.get('op')
 
     if op == 'get':
         result = {}
-        for (item_id, query) in zip(stock_id_set, query_list):
+        for (item_id, query) in zip(item_id_set, query_list):
             result[item_id] = query
         return json.dumps(result)
 
     elif op == 'add':
         item_id = request.args.get('item_id')
         query = request.args.get('query')
-        if len(stock_id_set) >= 6:
+        if len(item_id_set) >= 6:
             return 'Error: The amount of scrapers is up to 6.'
-        elif item_id in stock_id_set:
+        elif item_id in item_id_set:
             return 'Error: The item_id is duplicated.'
         else:
-            stock_id_set.append(item_id)
+            item_id_set.append(item_id)
             query_list.append(query)
             p = Process(target=catch_pages_history, args=(query, item_id))
             pool.append(p)
@@ -69,11 +69,11 @@ def changeScrapers():
 
     elif op == 'remove':
         item_id = request.args.get('item_id')
-        if item_id not in stock_id_set:
+        if item_id not in item_id_set:
             return 'Error: The item_id is not existed.'
         else:
-            index = stock_id_set.index(item_id)
-            del stock_id_set[index]
+            index = item_id_set.index(item_id)
+            del item_id_set[index]
             del query_list[index]
             pool[index].terminate()
             del pool[index]

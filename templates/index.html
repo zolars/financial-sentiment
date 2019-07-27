@@ -12,9 +12,6 @@
     <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
     <script src="https://kit.fontawesome.com/9cd8517369.js"></script>
 
-    <!-- button -->
-    <link rel="stylesheet" type="text/css" href="https://codepen.io/jgthms/pen/EjxBdR.css">
-
     <!-- pnotify -->
     <script type="text/javascript" src="https://sciactive.com/pnotify/dist/iife/PNotify.js"></script>
     <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyConfirm.js"></script>
@@ -22,7 +19,10 @@
     <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyStyleMaterial.js"></script>
     <link href="https://sciactive.com/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet" type="text/css" />
 
-    <!-- import -->
+    <!-- button -->
+    <link rel="stylesheet" type="text/css" href="https://codepen.io/jgthms/pen/EjxBdR.css">
+
+    <!-- custom JS -->
     <script type="text/javascript" src="templates/index.js"></script>
     <!-- templates/ -->
 
@@ -69,16 +69,15 @@
     </h1>
 
     <div class='middleware'>
-        <button id='search_btn' class="button button-blue" onclick="search();">
-            <i class="fas fa-search"></i>
-            Add a new Scrapy for Twitter.com
+        <button id='search_btn_stock' class="button button-yellow" onclick="search('Stock');">
+            <i class="fas fa-chart-line"></i>
+            Add a new Scrapy for Stock
         </button>
 
-        <!-- <button id='search_btn' class="button button-yellow"
-            onclick="showScraper('notice', true, 'item_id', 'Query: yyy');">
-            <i class="fas fa-plus"></i>
-            Add for Test
-        </button> -->
+        <button id='search_btn_crypto' class="button button-blue" onclick="search('Crypto');">
+            <i class="fas fa-money-bill"></i>
+            Add a new Scrapy for Crypto
+        </button>
 
     </div>
 
