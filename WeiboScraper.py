@@ -39,7 +39,7 @@ class MySQL:
             port=3306,  # port num
             user='root',  # username
             passwd='123456',  # password
-            db='finance',
+            db='posts',
             charset='utf8mb4',
         )
         self._cur = self._conn.cursor()

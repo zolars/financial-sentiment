@@ -26,7 +26,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     Python 3.6.8 :: Anaconda, Inc. 
     ```
 
-4. Install dependencies.
+4. Download dependencies.
     ```
     $ python -m textblob.download_corpora
     ```
@@ -35,8 +35,9 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     ```
     $ mysql -u root -p
     Enter password:******
-    mysql> create DATABASE finance;
-    mysql> use finance;
+    mysql> create DATABASE posts;
+    mysql> create DATABASE cryptos;
+    mysql> use cryptos;
     Database changed
     ```
 
@@ -79,6 +80,10 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 | hilarious **filter:links**             | containing "hilarious" and linking to URLs.                               |
 | news **source:twitterfeed**            | containing "news" and entered via TwitterFeed                             |
 
+### Where is the export Excel files?
+
+They locate at `./out/`.
+
 ## Requirements
 
 ### Objective
@@ -91,7 +96,6 @@ Basically, this data aims to find is how social sentiment impacts price of:
   * Shares within those exchanges 
 
 * Global currencies
-
 * Cryptocurrencies
 
 In order to find the social sentiment of a stock, the coding will need to use key words to identify that the social media post is actually talking about that stock. I propose that the best way to classify whether the post is speaking about a financial stock would be through the stock abbreviation code, the name of the stock, the name of the CEO, I can provide more information on this later. 
@@ -99,9 +103,7 @@ In order to find the social sentiment of a stock, the coding will need to use ke
 ### Other elements the research hopes to address
 
 * Spikes (quick increases) in positive and negative social sentiment
-
 * Price spikes of a market, stock, share, currency, crypto, etc
-
 * Rank the importance of different social media accounts over others
   * Lots of followers online
   * Reposts of their post
@@ -113,7 +115,6 @@ In order to find the social sentiment of a stock, the coding will need to use ke
 ### Requirements of the platform
 
 * Data from a number of different international stock exchanges
-
 * Data from a number of different online social platforms
   * Twitter
   * Reddit
@@ -137,9 +138,7 @@ In order to find the social sentiment of a stock, the coding will need to use ke
     * Have an option to choose between all the different stocks in that exchange.
 
 * The next is a detailed page which outlines information about each of the stocks
-
   * Historical overview
-
   * Chart data of the stock price
   * Chart data of the stock sentiment
   * Link to posts about the stocks 
@@ -147,7 +146,5 @@ In order to find the social sentiment of a stock, the coding will need to use ke
 ### Long-term elements of the project
 
 * Is it possible to build a machine learning algorithm to identify when the social sentiment might go up or down?
-
 * Is it possible to analyze how different key words might affect the stock price more than other key works
-
 * Is it possible to put a weighting on different social sentiment, when something about a stock is posted by a reputable source how that then impacts on the stock price? i.e. extreme, massive

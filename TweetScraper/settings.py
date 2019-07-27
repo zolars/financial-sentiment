@@ -14,7 +14,7 @@ DOWNLOAD_HANDLERS = {'s3': None, }
 SPIDER_MODULES = ['TweetScraper.spiders']
 NEWSPIDER_MODULE = 'TweetScraper.spiders'
 
-MYSQL_DB_NAME = 'finance'
+MYSQL_DB_NAME = 'posts'
 MYSQL_USER = 'root'
 MYSQL_PASSWORD = '123456'
 ITEM_PIPELINES = {
