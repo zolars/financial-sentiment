@@ -55,16 +55,16 @@ def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetim
 
 
 def out_stock_excel(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
+    file_path = './out/' + query + '_stock.xlsx'
+    writer = pd.ExcelWriter(file_path)
+
     config = {'api_key': '138fd2efede60c466126add93ebf585fc5492f75'}
     client = TiingoClient(config)
-
     df = client.get_dataframe(query,
                               frequency='daily',
                               startDate='{:%Y-%m-%d}'.format(startdate),
                               endDate='{:%Y-%m-%d}'.format(enddate))
 
-    file_path = './out/' + query + '_stock.xlsx'
-    writer = pd.ExcelWriter(file_path)
     df.to_excel(writer, encoding='utf-8')
     writer.save()
 

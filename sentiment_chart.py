@@ -96,17 +96,18 @@ def gen_sentiment_chart(table):
 
 
 def out_sentiment_excel(table):
+    file_path = './out/' + table + '_sentiment.xlsx'
+    writer = pd.ExcelWriter(file_path)
+
     df = MySQL(table).searchAll()
     df['time'] = pd.to_datetime(df['time'])
     df = df.set_index('time')
-    file_path = './out/' + table + '_sentiment.xlsx'
-    writer = pd.ExcelWriter(file_path)
     df.to_excel(writer, encoding='utf-8')
     writer.save()
 
 
 if __name__ == "__main__":
-    sentiment_chart, startdate, enddate = gen_sentiment_chart("mmm")
-    stock_chart = gen_stock_chart("mmm", startdate, enddate)
-    sentiment_chart.overlap(stock_chart)
-    sentiment_chart.render()
+    out_sentiment_excel("nvda")
+    # stock_chart = gen_stock_chart("mmm", startdate, enddate)
+    # sentiment_chart.overlap(stock_chart)
+    # sentiment_chart.render()
