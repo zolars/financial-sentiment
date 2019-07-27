@@ -6,7 +6,7 @@ from jinja2 import Markup, Environment, FileSystemLoader
 from pyecharts import options as opts
 from pyecharts.charts import Page
 
-from tweet_engine import catch_pages_history
+from tweet_engine import catch_pages_history, catch_pages_realtime
 from sentiment_chart import gen_sentiment_chart, out_sentiment_excel
 from stock_chart import gen_stock_chart, out_stock_excel
 
@@ -14,6 +14,7 @@ from multiprocessing import Process, Queue
 
 app = Flask(__name__, static_folder="templates")
 item_id_set = []
+item_type_list = []
 query_list = []
 pool = []
 
@@ -47,23 +48,31 @@ def changeScrapers():
     op = request.args.get('op')
 
     if op == 'get':
+        request_item_type = request.args.get('item_type')
         result = {}
-        for (item_id, query) in zip(item_id_set, query_list):
-            result[item_id] = query
+        for (item_id, item_type, query) in zip(item_id_set, item_type_list, query_list):
+            if item_type == request_item_type:
+                result[item_id] = query
         return json.dumps(result)
 
     elif op == 'add':
         item_id = request.args.get('item_id')
         query = request.args.get('query')
+        item_type = request.args.get('item_type')
         if len(item_id_set) >= 6:
             return 'Error: The amount of scrapers is up to 6.'
         elif item_id in item_id_set:
             return 'Error: The item_id is duplicated.'
         else:
             item_id_set.append(item_id)
+            item_type_list.append(item_type)
             query_list.append(query)
-            p = Process(target=catch_pages_history, args=(query, item_id))
-            pool.append(p)
+            if item_type == 'Stock':
+                p = Process(target=catch_pages_history, args=(query, item_id))
+                pool.append(p)
+            elif item_type == 'Crypto':
+                p = Process(target=catch_pages_realtime, args=(query, item_id))
+                pool.append(p)
             pool[-1].start()
             return 'success'
 
@@ -74,6 +83,7 @@ def changeScrapers():
         else:
             index = item_id_set.index(item_id)
             del item_id_set[index]
+            del item_type_list[index]
             del query_list[index]
             pool[index].terminate()
             del pool[index]

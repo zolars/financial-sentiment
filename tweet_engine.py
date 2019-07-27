@@ -22,11 +22,10 @@ def catch_pages_history(query, item_id):
     reactor.run()
 
 
-def catch_pages_realtime(query, item_id):
+def catch_pages_all(query, item_id):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
 
     runner = CrawlerRunner(get_project_settings())
-    # .set("CLOSESPIDER_TIMEOUT", 30)
     runner.crawl(TweetScraper, query=query,
                  item_id=item_id, lang='en', top_tweet=False)
     d = runner.join()
@@ -34,30 +33,17 @@ def catch_pages_realtime(query, item_id):
     reactor.run()
 
 
-def tweet_engine(query, item_id):
-    p = Process(target=catch_pages_history, args=(query, item_id))
-    p.start()
-
+def catch_pages_realtime(query, item_id):
     while True:
-        if not p.is_alive():
-            try:
-                p.start()
-            except Exception as err:
-                print(err)
         try:
-            p1 = Process(target=catch_pages_realtime, args=(query, item_id))
-            p2 = Process(target=catch_pages_realtime, args=(query, item_id))
-            p1.start()
-            time.sleep(15)
-            p2.start()
-            p1.join()
-            p2.join()
+            p = Process(target=catch_pages_all, args=(query, item_id))
+            p.start()
+            time.sleep(30)
+            del p
         except Exception as e:
             print(e)
 
 
 if __name__ == "__main__":
-    p = Process(target=catch_pages_realtime, args=("JD.com", "JD"))
-    p.start()
-    p = Process(target=catch_pages_realtime, args=("Apple Inc", "AAPL"))
+    p = Process(target=catch_pages_realtime, args=("Trump", "Trump"))
     p.start()

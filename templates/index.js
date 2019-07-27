@@ -1,10 +1,10 @@
 var item_id_set = new Set();
 
-function search(type) {
+function search(item_type) {
   var temp_pair = []
   var item_id_notice = PNotify.notice({
-    title: type + ' ID Needed',
-    text: 'Please input the ' + type + ' ID : ',
+    title: item_type + ' ID Needed',
+    text: 'Please input the ' + item_type + ' ID : ',
     icon: 'fas fa-question-circle',
     hide: false,
     stack: {
@@ -30,7 +30,7 @@ function search(type) {
     if (e.value === "") {
       item_id_notice.cancelClose().update({
         title: 'Sorry',
-        text: 'The ' + type + ' ID cannot be null.',
+        text: 'The ' + item_type + ' ID cannot be null.',
         icon: true,
         type: 'info',
         hide: true,
@@ -83,7 +83,7 @@ function search(type) {
                   });
                 } else if (e == null) {
                   query_notice.remove();
-                  changeScrapers("add", temp_pair[0], temp_pair[1]);
+                  changeScrapers("add", item_type, temp_pair[0], temp_pair[1]);
                 } else {
                   temp_pair.push(e);
                   query_notice.cancelClose().update({
@@ -148,7 +148,7 @@ function search(type) {
       if (item_id_set.has(v)) {
         item_id_notice.cancelClose().update({
           title: 'Sorry',
-          text: 'Do not add the same ' + type + ' ID.',
+          text: 'Do not add the same ' + item_type + ' ID.',
           icon: true,
           type: 'info',
           hide: true,
@@ -166,7 +166,7 @@ function search(type) {
         temp_pair.push(v);
         item_id_notice.cancelClose().update({
           title: v,
-          text: 'Is it the ' + type + ' ID you wanna search for?',
+          text: 'Is it the ' + item_type + ' ID you wanna search for?',
           icon: true,
           type: 'success',
           hide: true,
@@ -187,7 +187,7 @@ function search(type) {
   item_id_notice.on('pnotify.cancel', function (e) {
     item_id_notice.cancelClose().update({
       title: 'Sorry',
-      text: 'You need specify a ' + type + ' ID.',
+      text: 'You need specify a ' + item_type + ' ID.',
       icon: true,
       type: 'info',
       hide: true,
@@ -204,7 +204,7 @@ function search(type) {
   });
 }
 
-function changeScrapers(op, item_id, query) {
+function changeScrapers(op, item_type, item_id, query) {
   function showTopMsg(result) {
     if (typeof window.stackBarTop === 'undefined') {
       window.stackBarTop = {
@@ -217,7 +217,7 @@ function changeScrapers(op, item_id, query) {
     if (result != 'success' && op != 'get') {
       var opts = {
         title: 'Fail to ' + op + ' a Scrapy as below : ',
-        text: '<b>' + type + ' ID : ' + item_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
+        text: '<b>ID : ' + item_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
         textTrusted: true,
         type: 'error',
         addClass: 'stack-bar-top',
@@ -232,19 +232,19 @@ function changeScrapers(op, item_id, query) {
 
   $.ajax({
     type: "GET",
-    url: "http://127.0.0.1:5000/scrapers?op=" + op + "&item_id=" + item_id + "&&query=" + query,
+    url: "http://127.0.0.1:5000/scrapers?op=" + op + "&item_type=" + item_type + "&item_id=" + item_id + "&&query=" + query,
     success: function (result) {
       showTopMsg(result)
       if (op == 'add') {
         item_id_set.add(item_id);
-        showScraper('notice', item_id, 'Query: ' + query);
+        showScraper(item_type, item_id, 'Query: ' + query);
       } else if (op == 'remove') {
         item_id_set.delete(item_id);
       } else if (op == 'get') {
         result = $.parseJSON(result)
         for (var item_id_temp in result) {
           item_id_set.add(item_id_temp);
-          showScraper('notice', item_id_temp, 'Query: ' + result[item_id_temp]);
+          showScraper(item_type, item_id, 'Query: ' + result[item_id_temp]);
         }
       }
       console.log(result)
@@ -258,7 +258,7 @@ function changeScrapers(op, item_id, query) {
   });
 }
 
-function showScraper(type, title, text) {
+function showScraper(item_type, title, text) {
   PNotify.defaults.styling = 'material';
   if (typeof window.stackContextModal === 'undefined') {
     window.stackContextModal = {
@@ -270,11 +270,10 @@ function showScraper(type, title, text) {
     };
   }
   var opts = {
-    title: title,
-    text: text,
+    title: "&nbsp;&nbsp;" + title,
+    titleTrusted: true,
     hide: false,
     stack: window.stackContextModal,
-    type: 'info',
     width: '700px',
     modules: {
       Buttons: {
@@ -298,7 +297,7 @@ function showScraper(type, title, text) {
             text: 'Close',
             primary: true,
             click: function (notice) {
-              changeScrapers('remove', notice.options.data.title, "");
+              changeScrapers('remove', '', notice.options.data.title, "");
               notice.close();
             }
           }
@@ -310,12 +309,27 @@ function showScraper(type, title, text) {
     }
   };
 
-  PNotify.notice(opts);
+  switch (item_type) {
+    case 'Stock':
+      opts.type = 'notice';
+      opts.text = text;
+      opts.icon = 'fas fa-chart-line fa-2x';
+      break;
+    case 'Crypto':
+      opts.type = 'info';
+      opts.text = '<p>' + text + '</p>';
+      opts.textTrusted = true
+      opts.icon = 'fas fa-money-bill fa-2x';
+      break;
+  }
+
+  PNotify.alert(opts);
   PNotify.defaults.styling = 'brighttheme';
 };
 
 $(
   function () {
-    changeScrapers('get', '', '');
+    changeScrapers('get', 'Stock', '', '');
+    changeScrapers('get', 'Crypto', '', '');
   }
 );
