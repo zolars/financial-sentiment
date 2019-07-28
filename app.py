@@ -9,6 +9,7 @@ from pyecharts.charts import Page
 from tweet_engine import catch_pages_history, catch_pages_realtime
 from sentiment_chart import gen_sentiment_chart, out_sentiment_excel
 from stock_chart import gen_stock_chart, out_stock_excel
+from crypto_data import gen_crypto_data
 
 from multiprocessing import Process, Queue
 
@@ -56,7 +57,13 @@ def changeScrapers():
         return json.dumps(result)
 
     elif op == 'getContext':
-        pass  # TODO: return context.
+        request_item_type = request.args.get('item_type')
+        result = {}
+        for (item_id, item_type, query) in zip(item_id_set, item_type_list, query_list):
+            if item_type == request_item_type:
+                result[item_id] = query
+        return json.dumps(result)
+        # TODO: return context.
 
     elif op == 'add':
         item_id = request.args.get('item_id')

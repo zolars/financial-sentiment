@@ -10,7 +10,7 @@ from stock_chart import gen_stock_chart
 
 
 class MySQL:
-    def __init__(self, table):
+    def __init__(self, item_id):
         # Connect to MySQL
         self._conn = pymysql.connect(
             host='localhost',  # mysql server address
@@ -21,7 +21,7 @@ class MySQL:
             charset='utf8mb4',
         )
         self._cur = self._conn.cursor()
-        self._table = table
+        self._table = item_id
 
     def __del__(self):
         self._conn.close()
@@ -81,8 +81,8 @@ def line_smooth(index, data, name) -> Line:
     return c
 
 
-def gen_sentiment_chart(table):
-    df = MySQL(table).searchSentiment()
+def gen_sentiment_chart(item_id):
+    df = MySQL(item_id).searchSentiment()
     df['time'] = pd.to_datetime(df['time'])
     df = df.set_index('time')
     df = df.resample('w').mean()
@@ -91,15 +91,15 @@ def gen_sentiment_chart(table):
     index = []
     for i in df.index.tolist():
         index.append("{:%Y-%m-%d}".format(i.to_pydatetime()))
-    sentiment_chart = line_smooth(index, data, table)
+    sentiment_chart = line_smooth(index, data, item_id)
     return sentiment_chart, df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
 
 
-def out_sentiment_excel(table):
-    file_path = './out/' + table + '_sentiment.xlsx'
+def out_sentiment_excel(item_id):
+    file_path = './out/' + item_id + '_sentiment.xlsx'
     writer = pd.ExcelWriter(file_path)
 
-    df = MySQL(table).searchAll()
+    df = MySQL(item_id).searchAll()
     df['time'] = pd.to_datetime(df['time'])
     df = df.set_index('time')
     df.to_excel(writer, encoding='utf-8')

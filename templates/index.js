@@ -233,7 +233,7 @@ function changeScrapers(op, item_type, item_id, query) {
 
   $.ajax({
     type: "GET",
-    url: "http://127.0.0.1:5000/scrapers?op=" + op + "&item_type=" + item_type + "&item_id=" + item_id + "&&q uery=" + query,
+    url: "http://127.0.0.1:5000/scrapers?op=" + op + "&item_type=" + item_type + "&item_id=" + item_id + "&&query=" + query,
     success: function (result) {
       showTopMsg(result)
       if (op == 'getItems') {

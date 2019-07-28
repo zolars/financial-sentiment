@@ -34,12 +34,12 @@ def kline_datazoom_slider_position(index, data, name) -> Kline:
     return c
 
 
-def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
+def gen_stock_chart(item_id, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
 
     config = {'api_key': '138fd2efede60c466126add93ebf585fc5492f75'}
     client = TiingoClient(config)
 
-    df = client.get_dataframe(query,
+    df = client.get_dataframe(item_id,
                               frequency='weekly',
                               startDate='{:%Y-%m-%d}'.format(startdate),
                               endDate='{:%Y-%m-%d}'.format(enddate))
@@ -50,17 +50,17 @@ def gen_stock_chart(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetim
     index = []
     for i in df.index.tolist():
         index.append("{:%Y-%m-%d}".format(i.to_pydatetime()))
-    c = kline_datazoom_slider_position(index, data, query)
+    c = kline_datazoom_slider_position(index, data, item_id)
     return c
 
 
-def out_stock_excel(query, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
-    file_path = './out/' + query + '_stock.xlsx'
+def out_stock_excel(item_id, startdate=dt.datetime(2010, 1, 1), enddate=dt.datetime.now()):
+    file_path = './out/' + item_id + '_stock.xlsx'
     writer = pd.ExcelWriter(file_path)
 
     config = {'api_key': '138fd2efede60c466126add93ebf585fc5492f75'}
     client = TiingoClient(config)
-    df = client.get_dataframe(query,
+    df = client.get_dataframe(item_id,
                               frequency='daily',
                               startDate='{:%Y-%m-%d}'.format(startdate),
                               endDate='{:%Y-%m-%d}'.format(enddate))
