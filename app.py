@@ -43,17 +43,20 @@ def get_query():
 
 @app.route("/scrapers", methods=['GET'])
 def changeScrapers():
-    global item_id_set, query_list
+    global item_id_set, item_type_list, query_list, pool
 
     op = request.args.get('op')
 
-    if op == 'get':
+    if op == 'getItems':
         request_item_type = request.args.get('item_type')
         result = {}
         for (item_id, item_type, query) in zip(item_id_set, item_type_list, query_list):
             if item_type == request_item_type:
                 result[item_id] = query
         return json.dumps(result)
+
+    elif op == 'getContext':
+        pass  # TODO: return context.
 
     elif op == 'add':
         item_id = request.args.get('item_id')

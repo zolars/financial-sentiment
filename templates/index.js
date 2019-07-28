@@ -1,4 +1,5 @@
 var item_id_set = new Set();
+var notice_dict = {}
 
 function search(item_type) {
   var temp_pair = []
@@ -214,7 +215,7 @@ function changeScrapers(op, item_type, item_id, query) {
         'push': 'top'
       };
     }
-    if (result != 'success' && op != 'get') {
+    if (result != 'success' && op != 'getItems' && op != 'getContext') {
       var opts = {
         title: 'Fail to ' + op + ' a Scrapy as below : ',
         text: '<b>ID : ' + item_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
@@ -232,20 +233,24 @@ function changeScrapers(op, item_type, item_id, query) {
 
   $.ajax({
     type: "GET",
-    url: "http://127.0.0.1:5000/scrapers?op=" + op + "&item_type=" + item_type + "&item_id=" + item_id + "&&query=" + query,
+    url: "http://127.0.0.1:5000/scrapers?op=" + op + "&item_type=" + item_type + "&item_id=" + item_id + "&&q uery=" + query,
     success: function (result) {
       showTopMsg(result)
-      if (op == 'add') {
-        item_id_set.add(item_id);
-        showScraper(item_type, item_id, 'Query: ' + query);
-      } else if (op == 'remove') {
-        item_id_set.delete(item_id);
-      } else if (op == 'get') {
+      if (op == 'getItems') {
         result = $.parseJSON(result)
         for (var item_id_temp in result) {
           item_id_set.add(item_id_temp);
           showScraper(item_type, item_id, 'Query: ' + result[item_id_temp]);
         }
+      } else if (op == 'getContext') {
+        // TODO: receive context.
+      }
+      else if (op == 'add') {
+        item_id_set.add(item_id);
+        showScraper(item_type, item_id, 'Query: ' + query);
+      } else if (op == 'remove') {
+        item_id_set.delete(item_id);
+        delete notice_dict[item_id];
       }
       console.log(result)
     },
@@ -258,7 +263,7 @@ function changeScrapers(op, item_type, item_id, query) {
   });
 }
 
-function showScraper(item_type, title, text) {
+function showScraper(item_type, item_id, text) {
   PNotify.defaults.styling = 'material';
   if (typeof window.stackContextModal === 'undefined') {
     window.stackContextModal = {
@@ -270,7 +275,7 @@ function showScraper(item_type, title, text) {
     };
   }
   var opts = {
-    title: "&nbsp;&nbsp;" + title,
+    title: "&nbsp;&nbsp;" + item_id,
     titleTrusted: true,
     hide: false,
     stack: window.stackContextModal,
@@ -290,14 +295,15 @@ function showScraper(item_type, title, text) {
             text: 'MORE',
             primary: true,
             click: function (notice) {
-              window.open('templates/charts.html?item_id=' + title);
+              window.open('templates/charts.html?item_id=' + item_id);
             }
           },
           {
             text: 'Close',
             primary: true,
             click: function (notice) {
-              changeScrapers('remove', '', notice.options.data.title, "");
+              var temp = notice.options.data.title.split("&nbsp;&nbsp;")[1];
+              changeScrapers('remove', '', temp, "");
               notice.close();
             }
           }
@@ -322,14 +328,15 @@ function showScraper(item_type, title, text) {
       opts.icon = 'fas fa-money-bill fa-2x';
       break;
   }
-
-  PNotify.alert(opts);
+  notice_dict[item_id] = PNotify.alert(opts);
   PNotify.defaults.styling = 'brighttheme';
 };
 
-$(
-  function () {
-    changeScrapers('get', 'Stock', '', '');
-    changeScrapers('get', 'Crypto', '', '');
-  }
-);
+// Execute once
+$(document).ready(function () {
+  changeScrapers('getItems', 'Stock', '', '');
+  changeScrapers('getItems', 'Crypto', '', '');
+});
+
+// Interval forever
+setInterval("changeScrapers('getContext', 'Crypto', '', '');", 10000);

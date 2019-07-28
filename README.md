@@ -9,7 +9,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 1. You need to install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and [MySQL](http://dev.mysql.com/downloads/mysql/) on your computer.
     ```
     $ conda -V
-    conda 4.6.xx
+    conda 4.7.10
     ```
 
 2. Get the code from Github clone.
