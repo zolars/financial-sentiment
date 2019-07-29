@@ -38,7 +38,7 @@ def catch_pages_realtime(query, item_id):
         try:
             p = Process(target=catch_pages_all, args=(query, item_id))
             p.start()
-            time.sleep(30)
+            time.sleep(600)
             del p
         except Exception as e:
             print(e)

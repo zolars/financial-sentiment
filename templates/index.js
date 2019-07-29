@@ -215,7 +215,7 @@ function changeScrapers(op, item_type, item_id, query) {
         'push': 'top'
       };
     }
-    if (result != 'success' && op != 'getItems' && op != 'getContext') {
+    if (result != 'success') {
       var opts = {
         title: 'Fail to ' + op + ' a Scrapy as below : ',
         text: '<b>ID : ' + item_id + '</b><br><b>Query : ' + query + '</b><br><b>' + result + '<b>',
@@ -235,20 +235,18 @@ function changeScrapers(op, item_type, item_id, query) {
     type: "GET",
     url: "http://127.0.0.1:5000/scrapers?op=" + op + "&item_type=" + item_type + "&item_id=" + item_id + "&&query=" + query,
     success: function (result) {
-      showTopMsg(result)
       if (op == 'getItems') {
         result = $.parseJSON(result)
-        for (var item_id_temp in result) {
-          item_id_set.add(item_id_temp);
-          showScraper(item_type, item_id, 'Query: ' + result[item_id_temp]);
+        for (var response_item_id in result) {
+          item_id_set.add(response_item_id);
+          showScraper(item_type, response_item_id, 'Query: ' + result[response_item_id]);
         }
-      } else if (op == 'getContext') {
-        // TODO: receive context.
-      }
-      else if (op == 'add') {
+      } else if (op == 'add') {
+        showTopMsg(result)
         item_id_set.add(item_id);
         showScraper(item_type, item_id, 'Query: ' + query);
       } else if (op == 'remove') {
+        showTopMsg(result)
         item_id_set.delete(item_id);
         delete notice_dict[item_id];
       }
@@ -332,6 +330,68 @@ function showScraper(item_type, item_id, text) {
   PNotify.defaults.styling = 'brighttheme';
 };
 
+function updateCrypto() {
+  for (var item_id in notice_dict) {
+    if (notice_dict[item_id].options.data.type == 'info') {
+      console.log(item_id, notice_dict[item_id]);
+      // Crypto Amount
+      $.ajax({
+        type: "GET",
+        url: "https://min-api.cryptocompare.com/data/price?fsym=" + item_id + "&tsyms=USD,CNY",
+        success: function (result, data) {
+          // Price
+          this.item_id = this.url.replace("https://min-api.cryptocompare.com/data/price?fsym=", "").replace("&tsyms=USD,CNY", "")
+          console.log(this.item_id, " Price: ", result.USD, result.CNY);
+        }
+      });
+      $.ajax({
+        type: "GET",
+        url: "https://min-api.cryptocompare.com/data/histohour?fsym=" + item_id + "&tsym=USD&limit=1",
+        success: function (result) {
+          this.item_id = this.url.replace("https://min-api.cryptocompare.com/data/histohour?fsym=", "").replace("&tsym=USD&limit=1", "")
+          // Price High past hour
+          console.log(this.item_id, " Price High past hour: ", result.Data[1].high);
+          // Price Low past hour
+          console.log(this.item_id, " Price Low past hour: ", result.Data[1].low);
+          // Volume sold(hour)
+          volume_sold = result.Data[1].volumefrom;
+          console.log(this.item_id, " Volume sold(hour): ", volume_sold);
+        }
+      });
+      $.ajax({
+        type: "GET",
+        url: "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + item_id + "&tsyms=USD",
+        success: function (result) {
+          this.item_id = this.url.replace("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=", "").replace("&tsyms=USD", "")
+
+          // Coin Supply
+          coin_supply = result.RAW[item_id].USD.SUPPLY;
+          console.log(this.item_id, " Coin Supply: ", coin_supply);
+          // Market Cap
+          market_cap = result.RAW[item_id].USD.MKTCAP;
+          console.log(this.item_id, " Market Cap: ", market_cap);
+          // Velocity
+          velocity = result.RAW[item_id].USD.PRICE * coin_supply / market_cap;
+          console.log(this.item_id, " Velocity: ", velocity);
+        }
+      });
+      // Sentiment amount
+      $.ajax({
+        type: "GET",
+        url: "http://127.0.0.1:5000/amount?item_id=" + item_id,
+        success: function (result) {
+          this.item_id = this.url.replace("http://127.0.0.1:5000/amount?item_id=", "")
+          // Number of Twitter Posts Past Hour
+          console.log(this.item_id, " amount_hour: ", result.amount_hour);
+          // Average twitter posts per hour
+          console.log(this.item_id, " amount_avg: ", result.amount_avg);
+          // Spike in twitter posts  (# of twitter posts past hour - average per hour)/ average per hour)
+          console.log(this.item_id, " spike: ", result.spike);
+        }
+      })
+    }
+  }
+}
 // Execute once
 $(document).ready(function () {
   changeScrapers('getItems', 'Stock', '', '');
@@ -339,4 +399,4 @@ $(document).ready(function () {
 });
 
 // Interval forever
-setInterval("changeScrapers('getContext', 'Crypto', '', '');", 10000);
+setInterval("updateCrypto()", 10000);

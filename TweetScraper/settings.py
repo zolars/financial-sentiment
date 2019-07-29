@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 
 # !!! # Crawl responsibly by identifying yourself (and your website/e-mail) on the user-agent
 USER_AGENT = '1181689671@qq.com'
@@ -8,8 +10,10 @@ BOT_NAME = 'TweetScraper'
 LOG_LEVEL = 'INFO'
 DOWNLOAD_HANDLERS = {'s3': None, }
 
-# Addition timeout
-# CLOSESPIDER_TIMEOUT = 30
+# Log Output
+LOG_FILE = "./log/TweetScraper_{:%m_%d_%H_%M}.log".format(
+    datetime.datetime.now()
+)
 
 SPIDER_MODULES = ['TweetScraper.spiders']
 NEWSPIDER_MODULE = 'TweetScraper.spiders'

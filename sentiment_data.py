@@ -1,7 +1,9 @@
 from textblob import TextBlob
+
 import pandas as pd
 import pymysql
 import numpy as np
+
 import pyecharts.options as opts
 from pyecharts.charts import Line
 from pyecharts.globals import ThemeType
@@ -27,19 +29,43 @@ class MySQL:
         self._conn.close()
 
     def searchAll(self):
-        sql = 'select time, mid, type, text, userid, username, reposts_count, comments_count, attitudes_count, sentiment from ' + self._table
+        sql = 'SELECT time, mid, type, text, userid, username, reposts_count, comments_count, attitudes_count, sentiment FROM ' + self._table
         df = pd.read_sql(sql, con=self._conn)
         return df
 
     def searchSentiment(self):
-        sql = 'select time, sentiment from ' + self._table   # + ' where sentiment!=0'
+        sql = 'SELECT time, sentiment FROM ' + self._table   # + ' WHERE sentiment!=0'
         df = pd.read_sql(sql, con=self._conn)
         return df
 
-    def searchTweets(self):
-        sql = 'select time, sentiment from ' + self._table + ' where sentiment!=0'
-        df = pd.read_sql(sql, con=self._conn)
-        return df
+    # def searchTweets(self):
+    #     sql = 'SELECT time, sentiment FROM ' + self._table + ' WHERE sentiment!=0'
+    #     df = pd.read_sql(sql, con=self._conn)
+    #     return df
+
+    def searchTweetsByHour(self):
+        sql = 'SELECT time, sentiment FROM ' + self._table + \
+            ' WHERE time > DATE_SUB(NOW(), INTERVAL 60 MINUTE);'
+        amount_hour = len(pd.read_sql(sql, con=self._conn))
+
+        sql = 'select count(0) from ' + self._table
+        amount_all = pd.read_sql(sql, con=self._conn)['count(0)'][0]
+
+        sql = 'SELECT time FROM ' + self._table + ' limit 1;'
+        time_earlist = pd.read_sql(sql, con=self._conn).time[0]
+        sql = 'SELECT time from ' + self._table + \
+            ' where time = (SELECT max(time) FROM ' + self._table + ')'
+        time_latest = pd.read_sql(sql, con=self._conn).time[0]
+
+        time_earlist = pd.to_datetime(time_earlist, format='%Y-%m-%d %H:%M:%S')
+        time_latest = pd.to_datetime(time_latest, format='%Y-%m-%d %H:%M:%S')
+
+        amount_avg = amount_all / \
+            ((time_latest - time_earlist).total_seconds() / 3600)
+
+        spike = (amount_hour - amount_avg) / amount_avg
+
+        return {'amount_hour': amount_hour, 'amount_avg': amount_avg, 'spike': spike}
 
 
 def line_smooth(index, data, name) -> Line:
@@ -91,8 +117,8 @@ def gen_sentiment_chart(item_id):
     index = []
     for i in df.index.tolist():
         index.append("{:%Y-%m-%d}".format(i.to_pydatetime()))
-    sentiment_chart = line_smooth(index, data, item_id)
-    return sentiment_chart, df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
+    sentiment_data = line_smooth(index, data, item_id)
+    return sentiment_data, df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
 
 
 def out_sentiment_excel(item_id):
@@ -107,7 +133,4 @@ def out_sentiment_excel(item_id):
 
 
 if __name__ == "__main__":
-    out_sentiment_excel("nvda")
-    # stock_chart = gen_stock_chart("mmm", startdate, enddate)
-    # sentiment_chart.overlap(stock_chart)
-    # sentiment_chart.render()
+    MySQL("btc").searchTweetsByHour()

@@ -6,24 +6,23 @@
     <title>Financial Sentiment Charts</title>
 
     <!-- jquery -->
-    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
 
-    <!-- echarts -->
-    <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
-    <script src="https://kit.fontawesome.com/9cd8517369.js"></script>
+    <!-- font awesome -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/font-awesome/5.10.0-12/css/all.min.css">
 
     <!-- pnotify -->
-    <script type="text/javascript" src="https://sciactive.com/pnotify/dist/iife/PNotify.js"></script>
-    <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyConfirm.js"></script>
-    <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyButtons.js"></script>
-    <script type="text/javascript" src="https://sciactive.com/pnotify/lib/iife/PNotifyStyleMaterial.js"></script>
+    <script src="https://sciactive.com/pnotify/dist/iife/PNotify.js"></script>
+    <script src="https://sciactive.com/pnotify/lib/iife/PNotifyConfirm.js"></script>
+    <script src="https://sciactive.com/pnotify/lib/iife/PNotifyButtons.js"></script>
+    <script src="https://sciactive.com/pnotify/lib/iife/PNotifyStyleMaterial.js"></script>
     <link href="https://sciactive.com/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet" type="text/css" />
 
     <!-- button -->
-    <link rel="stylesheet" type="text/css" href="https://codepen.io/jgthms/pen/EjxBdR.css">
+    <link rel="stylesheet" type="text/css" href="button.css">
 
     <!-- custom JS -->
-    <script type="text/javascript" src="templates/index.js"></script>
+    <script src="index.js"></script>
     <!-- templates/ -->
 
     <!-- css  -->
@@ -80,17 +79,15 @@
             Add a new Scrapy for Crypto
         </button>
 
-        <!-- <button id='test_btn' class="button button-red"
-            onclick="showScraper('Stock', 'Stock', 'Query: Stock is what?' );">
+        <button id='test_btn' class="button button-red" onclick="showScraper('Crypto', 'BTC', 'Query: BTC is what?');">
             <i class="fas fa-add"></i>
-            Click me to TEST Stock!
+            Click me to TEST BTC!
         </button>
 
-        <button id='test_btn' class="button button-red"
-            onclick="showScraper('Crypto', 'Crypto', 'Query: Crypto is what?' );">
+        <button id='test_btn' class="button button-red" onclick="showScraper('Crypto', 'TRX', 'Justin Sun');">
             <i class="fas fa-add"></i>
-            Click me to TEST Stock!
-        </button> -->
+            Click me to TEST TRX!
+        </button>
     </div>
 
     <div id="scrapers" class="container" style="position: relative; overflow: auto;">

@@ -7,9 +7,8 @@ from pyecharts import options as opts
 from pyecharts.charts import Page
 
 from tweet_engine import catch_pages_history, catch_pages_realtime
-from sentiment_chart import gen_sentiment_chart, out_sentiment_excel
+from sentiment_data import gen_sentiment_chart, out_sentiment_excel, MySQL
 from stock_chart import gen_stock_chart, out_stock_excel
-from crypto_data import gen_crypto_data
 
 from multiprocessing import Process, Queue
 
@@ -56,15 +55,6 @@ def changeScrapers():
                 result[item_id] = query
         return json.dumps(result)
 
-    elif op == 'getContext':
-        request_item_type = request.args.get('item_type')
-        result = {}
-        for (item_id, item_type, query) in zip(item_id_set, item_type_list, query_list):
-            if item_type == request_item_type:
-                result[item_id] = query
-        return json.dumps(result)
-        # TODO: return context.
-
     elif op == 'add':
         item_id = request.args.get('item_id')
         query = request.args.get('query')
@@ -108,10 +98,10 @@ def get_charts():
     else:
         item_id = request.args.get('item_id')
 
-    sentiment_chart, startdate, enddate = gen_sentiment_chart(item_id)
+    sentiment_data, startdate, enddate = gen_sentiment_chart(item_id)
     stock_chart = gen_stock_chart(item_id, startdate, enddate)
-    sentiment_chart.overlap(stock_chart)
-    return json.dumps({"chart": json.loads(sentiment_chart.dump_options())})
+    sentiment_data.overlap(stock_chart)
+    return json.dumps({"chart": json.loads(sentiment_data.dump_options())})
 
 
 @app.route("/export", methods=['POST', 'GET'])
@@ -122,11 +112,20 @@ def export_charts():
     else:
         item_id = request.args.get('item_id')
     out_sentiment_excel(item_id)
-    sentiment_chart, startdate, enddate = gen_sentiment_chart(item_id)
+    sentiment_data, startdate, enddate = gen_sentiment_chart(item_id)
     out_stock_excel(item_id, startdate, enddate)
     stock_chart = gen_stock_chart(item_id, startdate, enddate)
-    sentiment_chart.overlap(stock_chart)
-    return json.dumps({"chart": json.loads(sentiment_chart.dump_options())})
+    sentiment_data.overlap(stock_chart)
+    return json.dumps({"chart": json.loads(sentiment_data.dump_options())})
+
+
+@app.route("/amount", methods=['POST', 'GET'])
+def get_amount():
+    if request.method == 'POST':
+        item_id = request.form['item_id']
+    else:
+        item_id = request.args.get('item_id')
+    return MySQL(item_id).searchTweetsByHour()
 
 
 if __name__ == "__main__":
