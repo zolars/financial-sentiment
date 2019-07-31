@@ -289,24 +289,24 @@ function showScraper(item_type, item_id, text) {
       },
       Confirm: {
         confirm: true,
-        buttons: [
-          {
-            text: 'MORE',
-            primary: true,
-            click: function (notice) {
-              window.open('templates/charts.html?item_id=' + item_id);
-            }
-          },
-          {
-            text: 'Close',
-            primary: true,
-            click: function (notice) {
-              var temp = notice.options.data.title.split("&nbsp;&nbsp;")[1];
-              changeScrapers('remove', '', temp, "");
-              notice.close();
-            }
-          }
-        ]
+        // buttons: [
+        //   {
+        //     text: 'MORE',
+        //     primary: true,
+        //     click: function (notice) {
+        //       window.open('templates/charts.html?item_id=' + item_id);
+        //     }
+        //   },
+        //   {
+        //     text: 'Close',
+        //     primary: true,
+        //     click: function (notice) {
+        //       var temp = notice.options.data.title.split("&nbsp;&nbsp;")[1];
+        //       changeScrapers('remove', '', temp, "");
+        //       notice.close();
+        //     }
+        //   }
+        // ]
       },
       History: {
         history: false
@@ -319,6 +319,24 @@ function showScraper(item_type, item_id, text) {
       opts.type = 'notice';
       opts.text = text;
       opts.icon = 'fas fa-chart-line fa-2x';
+      opts.modules.Confirm.buttons = [
+        {
+          text: 'MORE',
+          primary: true,
+          click: function (notice) {
+            window.open('templates/charts.html?item_id=' + item_id);
+          }
+        },
+        {
+          text: 'Close',
+          primary: true,
+          click: function (notice) {
+            var temp = notice.options.data.title.split("&nbsp;&nbsp;")[1];
+            changeScrapers('remove', '', temp, "");
+            notice.close();
+          }
+        }
+      ];
       break;
     case 'Crypto':
       opts.type = 'info';
@@ -363,6 +381,17 @@ function showScraper(item_type, item_id, text) {
           "</table>"].join("");
       opts.textTrusted = true;
       opts.icon = 'fas fa-money-bill fa-2x';
+      opts.modules.Confirm.buttons = [
+        {
+          text: 'Close',
+          primary: true,
+          click: function (notice) {
+            var temp = notice.options.data.title.split("&nbsp;&nbsp;")[1];
+            changeScrapers('remove', '', temp, "");
+            notice.close();
+          }
+        }
+      ];
       break;
   }
   notice_dict[item_id] = PNotify.alert(opts);
