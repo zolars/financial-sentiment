@@ -43,30 +43,6 @@ class MySQL:
     #     df = pd.read_sql(sql, con=self._conn)
     #     return df
 
-    def searchTweetsByHour(self):
-        sql = 'SELECT time, sentiment FROM ' + self._table + \
-            ' WHERE time > DATE_SUB(NOW(), INTERVAL 60 MINUTE);'
-        amount_hour = len(pd.read_sql(sql, con=self._conn))
-
-        sql = 'select count(0) from ' + self._table
-        amount_all = pd.read_sql(sql, con=self._conn)['count(0)'][0]
-
-        sql = 'SELECT time FROM ' + self._table + ' limit 1;'
-        time_earlist = pd.read_sql(sql, con=self._conn).time[0]
-        sql = 'SELECT time from ' + self._table + \
-            ' where time = (SELECT max(time) FROM ' + self._table + ')'
-        time_latest = pd.read_sql(sql, con=self._conn).time[0]
-
-        time_earlist = pd.to_datetime(time_earlist, format='%Y-%m-%d %H:%M:%S')
-        time_latest = pd.to_datetime(time_latest, format='%Y-%m-%d %H:%M:%S')
-
-        amount_avg = amount_all / \
-            ((time_latest - time_earlist).total_seconds() / 3600)
-
-        spike = (amount_hour - amount_avg) / amount_avg
-
-        return {'amount_hour': amount_hour, 'amount_avg': amount_avg, 'spike': spike}
-
 
 def line_smooth(index, data, name) -> Line:
     c = (
@@ -130,7 +106,3 @@ def out_sentiment_excel(item_id):
     df = df.set_index('time')
     df.to_excel(writer, encoding='utf-8')
     writer.save()
-
-
-if __name__ == "__main__":
-    MySQL("btc").searchTweetsByHour()

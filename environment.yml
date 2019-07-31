@@ -8,6 +8,7 @@ dependencies:
     - tqdm
     - emoji
     - tiingo[pandas]
+    - cryptocompy
     - openpyxl
     - pandas
     - pyecharts

@@ -7,8 +7,9 @@ from pyecharts import options as opts
 from pyecharts.charts import Page
 
 from tweet_engine import catch_pages_history, catch_pages_realtime
-from sentiment_data import gen_sentiment_chart, out_sentiment_excel, MySQL
+from sentiment_data import gen_sentiment_chart, out_sentiment_excel
 from stock_chart import gen_stock_chart, out_stock_excel
+from crypto_data import gen_crypto_data
 
 from multiprocessing import Process, Queue
 
@@ -119,13 +120,13 @@ def export_charts():
     return json.dumps({"chart": json.loads(sentiment_data.dump_options())})
 
 
-@app.route("/amount", methods=['POST', 'GET'])
+@app.route("/getCryptoData", methods=['POST', 'GET'])
 def get_amount():
     if request.method == 'POST':
         item_id = request.form['item_id']
     else:
         item_id = request.args.get('item_id')
-    return MySQL(item_id).searchTweetsByHour()
+    return gen_crypto_data(item_id)
 
 
 if __name__ == "__main__":

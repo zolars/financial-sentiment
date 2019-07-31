@@ -19,10 +19,10 @@
     <link href="https://sciactive.com/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet" type="text/css" />
 
     <!-- button -->
-    <link rel="stylesheet" type="text/css" href="button.css">
+    <link rel="stylesheet" type="text/css" href="templates/button.css">
 
     <!-- custom JS -->
-    <script src="index.js"></script>
+    <script src="templates/index.js"></script>
     <!-- templates/ -->
 
     <!-- css  -->
@@ -37,6 +37,10 @@
             /* background: rgb(212, 213, 236); */
             font-weight: 500;
             font-family: "Cousine", "Segoe UI", "Lucida Grande", Helvetica, Arial, sans-serif, FreeSans, Arimo;
+        }
+
+        td {
+            text-align: center;
         }
 
         [ui-pnotify].ui-pnotify.stack-bar-top {
@@ -55,7 +59,7 @@
             /* text-align: center; */
             border: 1px solid＃000;
             height: 600px;
-            width: 800px;
+            width: 1200px;
         }
     </style>
 </head>
@@ -79,7 +83,7 @@
             Add a new Scrapy for Crypto
         </button>
 
-        <button id='test_btn' class="button button-red" onclick="showScraper('Crypto', 'BTC', 'Query: BTC is what?');">
+        <!-- <button id='test_btn' class="button button-red" onclick="showScraper('Crypto', 'BTC', 'Query: BTC is what?');">
             <i class="fas fa-add"></i>
             Click me to TEST BTC!
         </button>
@@ -87,7 +91,7 @@
         <button id='test_btn' class="button button-red" onclick="showScraper('Crypto', 'TRX', 'Justin Sun');">
             <i class="fas fa-add"></i>
             Click me to TEST TRX!
-        </button>
+        </button> -->
     </div>
 
     <div id="scrapers" class="container" style="position: relative; overflow: auto;">

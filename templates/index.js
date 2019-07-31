@@ -85,6 +85,7 @@ function search(item_type) {
                 } else if (e == null) {
                   query_notice.remove();
                   changeScrapers("add", item_type, temp_pair[0], temp_pair[1]);
+                  updateCrypto();
                 } else {
                   temp_pair.push(e);
                   query_notice.cancelClose().update({
@@ -277,7 +278,7 @@ function showScraper(item_type, item_id, text) {
     titleTrusted: true,
     hide: false,
     stack: window.stackContextModal,
-    width: '700px',
+    width: '1000px',
     modules: {
       Buttons: {
         closer: false,
@@ -321,8 +322,46 @@ function showScraper(item_type, item_id, text) {
       break;
     case 'Crypto':
       opts.type = 'info';
-      opts.text = '<p>' + text + '</p>';
-      opts.textTrusted = true
+      opts.text = '<p>' + text + '</p>' +
+        ["<table border=\"1\">",
+          "<tr>",
+          "<td>Price</td>",
+          "<td>Price High</td>",
+          "<td>Price Low</td>",
+          "<td>Volume Sold</td>",
+          "<td>Coin Supply</td>",
+          "<td>Market Cap</td>",
+          "<td>Velocity</td>",
+          "</tr>",
+          "<tr>",
+          "<td id='price_" + item_id + "'></td>",
+          "<td id='high_" + item_id + "'></td>",
+          "<td id='low_" + item_id + "'></td>",
+          "<td id='volume_sold_" + item_id + "'></td>",
+          "<td id='coin_supply_" + item_id + "'></td>",
+          "<td id='market_cap_" + item_id + "'></td>",
+          "<td id='velocity_" + item_id + "'></td>",
+          "</tr>",
+          "</table>"].join("") + '<br>' +
+        ["<table border=\"1\">",
+          "<tr>",
+          "<td>Number of Twitter Posts</td>",
+          "<td>Average of Twitter Posts</td>",
+          "<td>Spike of Twitter Posts</td>",
+          "<td>Sentiment</td>",
+          "<td>Total Average Sentiment</td>",
+          "<td>Sentiment Normality</td>",
+          "</tr>",
+          "<tr>",
+          "<td id='amount_hour_" + item_id + "'></td>",
+          "<td id='amount_avg_" + item_id + "'></td>",
+          "<td id='amount_spike_" + item_id + "'></td>",
+          "<td id='sentiment_hour_" + item_id + "'></td>",
+          "<td id='sentiment_avg_" + item_id + "'></td>",
+          "<td id='sentiment_spike_" + item_id + "'></td>",
+          "</tr>",
+          "</table>"].join("");
+      opts.textTrusted = true;
       opts.icon = 'fas fa-money-bill fa-2x';
       break;
   }
@@ -337,58 +376,51 @@ function updateCrypto() {
       // Crypto Amount
       $.ajax({
         type: "GET",
-        url: "https://min-api.cryptocompare.com/data/price?fsym=" + item_id + "&tsyms=USD,CNY",
-        success: function (result, data) {
-          // Price
-          this.item_id = this.url.replace("https://min-api.cryptocompare.com/data/price?fsym=", "").replace("&tsyms=USD,CNY", "")
-          console.log(this.item_id, " Price: ", result.USD, result.CNY);
-        }
-      });
-      $.ajax({
-        type: "GET",
-        url: "https://min-api.cryptocompare.com/data/histohour?fsym=" + item_id + "&tsym=USD&limit=1",
+        url: "http://127.0.0.1:5000/getCryptoData?item_id=" + item_id,
         success: function (result) {
-          this.item_id = this.url.replace("https://min-api.cryptocompare.com/data/histohour?fsym=", "").replace("&tsym=USD&limit=1", "")
-          // Price High past hour
-          console.log(this.item_id, " Price High past hour: ", result.Data[1].high);
-          // Price Low past hour
-          console.log(this.item_id, " Price Low past hour: ", result.Data[1].low);
-          // Volume sold(hour)
-          volume_sold = result.Data[1].volumefrom;
-          console.log(this.item_id, " Volume sold(hour): ", volume_sold);
-        }
-      });
-      $.ajax({
-        type: "GET",
-        url: "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + item_id + "&tsyms=USD",
-        success: function (result) {
-          this.item_id = this.url.replace("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=", "").replace("&tsyms=USD", "")
+          this.item_id = this.url.replace("http://127.0.0.1:5000/getCryptoData?item_id=", "");
 
+          // Price
+          console.log(this.item_id, "price: ", result.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          $('#price_' + this.item_id).text(result.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          // Price High
+          console.log(this.item_id, "high: ", result.high.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          $('#high_' + this.item_id).text(result.high.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          // Price Low
+          console.log(this.item_id, "low: ", result.low.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          $('#low_' + this.item_id).text(result.low.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          // Volume sold(hour)
+          console.log(this.item_id, "volume_sold: ", result.volume_sold.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          $('#volume_sold_' + this.item_id).text(result.volume_sold.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
           // Coin Supply
-          coin_supply = result.RAW[item_id].USD.SUPPLY;
-          console.log(this.item_id, " Coin Supply: ", coin_supply);
+          console.log(this.item_id, "coin_supply: ", result.coin_supply.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          $('#coin_supply_' + this.item_id).text(result.coin_supply.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
           // Market Cap
-          market_cap = result.RAW[item_id].USD.MKTCAP;
-          console.log(this.item_id, " Market Cap: ", market_cap);
+          console.log(this.item_id, "market_cap: ", result.market_cap.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+          $('#market_cap_' + this.item_id).text(result.market_cap.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
           // Velocity
-          velocity = result.RAW[item_id].USD.PRICE * coin_supply / market_cap;
-          console.log(this.item_id, " Velocity: ", velocity);
+          console.log(this.item_id, "velocity: ", result.velocity);
+          $('#velocity_' + this.item_id).text(result.velocity);
+          // Number of Twitter Posts
+          console.log(this.item_id, "amount_hour: ", result.amount_hour);
+          $('#amount_hour_' + this.item_id).text(result.amount_hour);
+          // Average twitter posts per hour
+          console.log(this.item_id, "amount_avg: ", result.amount_avg);
+          $('#amount_avg_' + this.item_id).text(result.amount_avg.toFixed(0));
+          // Spike in twitter posts  (Amount of twitter posts - average per hour)/ average per hour)
+          console.log(this.item_id, "amount_spike: ", result.amount_spike);
+          $('#amount_spike_' + this.item_id).text(result.amount_spike.toFixed(0));
+          // Sentiment over	
+          console.log(this.item_id, "sentiment_hour: ", result.sentiment_hour);
+          $('#sentiment_hour_' + this.item_id).text(result.sentiment_hour.toFixed(2));
+          // Total Average Sentiment
+          console.log(this.item_id, "sentiment_avg: ", result.sentiment_avg);
+          $('#sentiment_avg_' + this.item_id).text(result.sentiment_avg.toFixed(2));
+          // Sentiment Normality  (Sentiment over - total average sentment) / total average sentment
+          console.log(this.item_id, "sentiment_spike: ", result.sentiment_spike);
+          $('#sentiment_spike_' + this.item_id).text(result.sentiment_spike.toFixed(2));
         }
       });
-      // Sentiment amount
-      $.ajax({
-        type: "GET",
-        url: "http://127.0.0.1:5000/amount?item_id=" + item_id,
-        success: function (result) {
-          this.item_id = this.url.replace("http://127.0.0.1:5000/amount?item_id=", "")
-          // Number of Twitter Posts Past Hour
-          console.log(this.item_id, " amount_hour: ", result.amount_hour);
-          // Average twitter posts per hour
-          console.log(this.item_id, " amount_avg: ", result.amount_avg);
-          // Spike in twitter posts  (# of twitter posts past hour - average per hour)/ average per hour)
-          console.log(this.item_id, " spike: ", result.spike);
-        }
-      })
     }
   }
 }
@@ -396,7 +428,8 @@ function updateCrypto() {
 $(document).ready(function () {
   changeScrapers('getItems', 'Stock', '', '');
   changeScrapers('getItems', 'Crypto', '', '');
+  updateCrypto();
 });
 
 // Interval forever
-setInterval("updateCrypto()", 10000);
+setInterval("updateCrypto()", 60000);
