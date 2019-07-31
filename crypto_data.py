@@ -1,4 +1,5 @@
 import os
+import time
 
 import pandas as pd
 import pymysql
@@ -101,7 +102,8 @@ def gen_crypto_data(item_id):
     else:
         wb = load_workbook(file_path)
         ws = wb.active
-    ws.append([result['price'],
+    ws.append([time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+               result['price'],
                result['high'],
                result['low'],
                result['volume_sold'],
