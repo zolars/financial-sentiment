@@ -26,6 +26,11 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     Python 3.6.8 :: Anaconda, Inc. 
     ```
 
+    If you want to update your environment, use:
+    ```
+    $ conda env update -f environment.yml
+    ```
+
 4. Download dependencies.
     ```
     $ python -m textblob.download_corpora
@@ -36,8 +41,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     $ mysql -u root -p
     Enter password:******
     mysql> create DATABASE posts;
-    mysql> create DATABASE cryptos;
-    mysql> use cryptos;
+    mysql> use posts;
     Database changed
     ```
 
