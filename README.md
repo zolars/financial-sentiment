@@ -6,15 +6,15 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 
 ## Usage
 
-1. You need to install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and [MySQL](http://dev.mysql.com/downloads/mysql/) on your computer.
+1. Get the code from Github clone or download zip by clicking [this](https://github.com/zolars/financial-sentiment/archive/master.zip).
+    ```
+    $ git clone https://github.com/zolars/finanical-sentiment.git
+    ```
+
+2. You need to install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and [MySQL](http://dev.mysql.com/downloads/mysql/) on your computer.
     ```
     $ conda -V
     conda 4.7.10
-    ```
-
-2. Get the code from Github clone.
-    ```
-    $ git clone https://github.com/zolars/finanical-sentiment.git
     ```
 
 3. Create the environment.
