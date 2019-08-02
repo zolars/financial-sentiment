@@ -17,6 +17,14 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     conda 4.7.10
     ```
 
+    You need to set "123456" as the MySQL password. Or change the password in the code.
+
+    ```
+    $ mysql -u root -p
+    Enter password:123456
+    Welcome to the MySQL monitor.  Commands end with ; or \g.
+    ```
+
 3. Create the environment.
     ```
     $ cd finanical-sentiment
@@ -39,7 +47,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 5. Create a new DATABASE with MySQL.
     ```
     $ mysql -u root -p
-    Enter password:******
+    Enter password:123456
     mysql> create DATABASE posts;
     mysql> use posts;
     Database changed
