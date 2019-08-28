@@ -1,3 +1,4 @@
+import os
 import json
 import datetime as dt
 
@@ -18,6 +19,18 @@ item_id_set = []
 item_type_list = []
 query_list = []
 pool = []
+
+
+def mkdir(path):
+    path = path.strip()
+    path = path.rstrip("\\")
+    isExists = os.path.exists(path)
+
+    if not isExists:
+        os.makedirs(path)
+        return True
+    else:
+        return False
 
 
 @app.route("/")
@@ -130,4 +143,6 @@ def get_amount():
 
 
 if __name__ == "__main__":
+    mkdir('out')
+    mkdir('log')
     app.run(debug=False)
