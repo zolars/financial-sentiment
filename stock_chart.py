@@ -65,7 +65,6 @@ def out_stock_excel(item_id, startdate=dt.datetime(2010, 1, 1), enddate=dt.datet
                               startDate='{:%Y-%m-%d}'.format(startdate),
                               endDate='{:%Y-%m-%d}'.format(enddate))
     df.index = df.index.tz_convert(None)
-    print(df.index)
 
     df.to_excel(writer, encoding='utf-8', engine='openpyxl')
     writer.save()
