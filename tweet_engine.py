@@ -15,8 +15,11 @@ from multiprocessing import Process, Queue
 def catch_pages_history(query, item_id):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
     runner = CrawlerRunner(get_project_settings())
-    runner.crawl(TweetScraper, query=query,
-                 item_id=item_id, lang='en', top_tweet=True)
+    runner.crawl(TweetScraper,
+                 query=query,
+                 item_id=item_id,
+                 lang='en',
+                 top_tweet=True)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
@@ -26,8 +29,11 @@ def catch_pages_all(query, item_id):
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
 
     runner = CrawlerRunner(get_project_settings())
-    runner.crawl(TweetScraper, query=query,
-                 item_id=item_id, lang='en', top_tweet=False)
+    runner.crawl(TweetScraper,
+                 query=query,
+                 item_id=item_id,
+                 lang='en',
+                 top_tweet=False)
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
