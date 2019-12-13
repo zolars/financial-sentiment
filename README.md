@@ -17,17 +17,17 @@ Cooperation project with the University of New South Wales aimed to analyse infl
     conda 4.7.10
     ```
 
-    You need to set "123456" as the MySQL password. Or change the password in the code.
+    You need to set "root" as the MySQL password. Or change the password in the code.
 
     ```
     $ mysql -u root -p
-    Enter password:123456
+    Enter password:root
     Welcome to the MySQL monitor.  Commands end with ; or \g.
     ```
 
 3. Create the environment.
     ```
-    $ cd finanical-sentiment
+    $ cd finanical-sentiment-charts
     $ conda env create -f environment.yml
     $ conda activate finance
     $ python -V
@@ -47,7 +47,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 5. Create a new DATABASE with MySQL.
     ```
     $ mysql -u root -p
-    Enter password:123456
+    Enter password:root
     mysql> create DATABASE posts;
     mysql> use posts;
     Database changed
@@ -55,7 +55,7 @@ Cooperation project with the University of New South Wales aimed to analyse infl
 
 6. Run the app
     ```
-    $ cd finanical-sentiment
+    $ cd finanical-sentiment-charts
     $ conda activate finance
     $ python app.py
     ```
