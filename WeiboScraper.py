@@ -10,8 +10,6 @@ import random
 import pymysql
 import datetime as dt
 from tqdm import tqdm
-
-
 """
 +-----------------+------------+------+-----+---------+-------+
 | Field           | Type       | Null | Key | Default | Extra |
@@ -38,7 +36,7 @@ class MySQL:
             host='localhost',  # mysql server address
             port=3306,  # port num
             user='root',  # username
-            passwd='123456',  # password
+            passwd='root',  # password
             db='posts',
             charset='utf8mb4',
         )
@@ -83,31 +81,33 @@ class WeiboScraper():
         self._query_val = query_val
         self._log = log
 
-        self.user_agents = ['Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
-                            'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
-                            'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; rv:11.0) like Gecko)',
-                            'Mozilla/5.0 (Windows; U; Windows NT 5.2) Gecko/2008070208 Firefox/3.0.1',
-                            'Mozilla/5.0 (Windows; U; Windows NT 5.1) Gecko/20070309 Firefox/2.0.0.3',
-                            'Mozilla/5.0 (Windows; U; Windows NT 5.1) Gecko/20070803 Firefox/1.5.0.12',
-                            'Opera/9.27 (Windows NT 5.2; U; zh-cn)',
-                            'Mozilla/5.0 (Macintosh; PPC Mac OS X; U; en) Opera 8.0',
-                            'Opera/8.0 (Macintosh; PPC Mac OS X; U; en)',
-                            'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.12) Gecko/20080219 Firefox/2.0.0.12 Navigator/9.0.0.6',
-                            'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Win64; x64; Trident/4.0)',
-                            'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)',
-                            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.2; .NET4.0C; .NET4.0E)',
-                            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Maxthon/4.0.6.2000 Chrome/26.0.1410.43 Safari/537.1 ',
-                            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.2; .NET4.0C; .NET4.0E; QQBrowser/7.3.9825.400)',
-                            'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0 ',
-                            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.92 Safari/537.1 LBBROWSER',
-                            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0; BIDUBrowser 2.x)',
-                            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.11 TaoBrowser/3.0 Safari/536.11']
+        self.user_agents = [
+            'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
+            'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; rv:11.0) like Gecko)',
+            'Mozilla/5.0 (Windows; U; Windows NT 5.2) Gecko/2008070208 Firefox/3.0.1',
+            'Mozilla/5.0 (Windows; U; Windows NT 5.1) Gecko/20070309 Firefox/2.0.0.3',
+            'Mozilla/5.0 (Windows; U; Windows NT 5.1) Gecko/20070803 Firefox/1.5.0.12',
+            'Opera/9.27 (Windows NT 5.2; U; zh-cn)',
+            'Mozilla/5.0 (Macintosh; PPC Mac OS X; U; en) Opera 8.0',
+            'Opera/8.0 (Macintosh; PPC Mac OS X; U; en)',
+            'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.12) Gecko/20080219 Firefox/2.0.0.12 Navigator/9.0.0.6',
+            'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Win64; x64; Trident/4.0)',
+            'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)',
+            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.2; .NET4.0C; .NET4.0E)',
+            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Maxthon/4.0.6.2000 Chrome/26.0.1410.43 Safari/537.1 ',
+            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.2; .NET4.0C; .NET4.0E; QQBrowser/7.3.9825.400)',
+            'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:21.0) Gecko/20100101 Firefox/21.0 ',
+            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.92 Safari/537.1 LBBROWSER',
+            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0; BIDUBrowser 2.x)',
+            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.11 TaoBrowser/3.0 Safari/536.11'
+        ]
 
         self._db = MySQL(query)
         self._table = query
 
     def __del__(self):
-        del(self._db)
+        del (self._db)
 
     def clean_text(self, text):
         """clean tags or emoji of texts"""
@@ -123,14 +123,13 @@ class WeiboScraper():
 
     def catch_data(self, page_id):
         """catch one page's data"""
-        headers = {'User-Agent': self.user_agents[random.randrange(
-            0, len(self.user_agents))]}
-        resp = requests.get(
-            url=self._url_template.format(
-                self._query_val,
-                self._query_val,
-                page_id),
-            headers=headers)
+        headers = {
+            'User-Agent':
+            self.user_agents[random.randrange(0, len(self.user_agents))]
+        }
+        resp = requests.get(url=self._url_template.format(
+            self._query_val, self._query_val, page_id),
+                            headers=headers)
 
         card_group = json.loads(resp.text)['data']['cards'][0]['card_group']
 
@@ -146,8 +145,7 @@ class WeiboScraper():
             if '小时' in time:
                 delta = dt.timedelta(hours=int(time.replace('小时前', '')))
             elif '分钟' in time:
-                delta = dt.timedelta(
-                    minutes=int(time.replace('分钟前', '')))
+                delta = dt.timedelta(minutes=int(time.replace('分钟前', '')))
             elif '刚刚' in time:
                 pass
             else:
@@ -161,8 +159,8 @@ class WeiboScraper():
             result = [
                 mblog['id'],  # weibo id
                 "weibo",  # type
-                self.clean_text(mblog['text']).strip(
-                    '\n').encode("utf8"),  # text
+                self.clean_text(
+                    mblog['text']).strip('\n').encode("utf8"),  # text
                 time,  # time of posts
                 str(mblog['user']['id']),  # userid
                 mblog['user']['screen_name'],  # username
@@ -182,15 +180,11 @@ class WeiboScraper():
                 print("\nMySQL ERROR: \t", e)
         try:
             self._log.write(
-                "{:%Y-%m-%d %H:%M:%S} Success: Catch {:2} data, update {:2} date at page {}.\tURL: {}\n".format(
-                    dt.datetime.now(),
-                    results,
-                    effect_rows,
-                    page_id,
-                    self._url_template.format(
-                        self._query_val,
-                        self._query_val,
-                        page_id)))
+                "{:%Y-%m-%d %H:%M:%S} Success: Catch {:2} data, update {:2} date at page {}.\tURL: {}\n"
+                .format(
+                    dt.datetime.now(), results, effect_rows, page_id,
+                    self._url_template.format(self._query_val, self._query_val,
+                                              page_id)))
         except Exception as e:
             print("\nLog ERROR: \t", e)
 
@@ -217,12 +211,11 @@ class WeiboScraper():
                     else:
                         try:
                             self._log.write(
-                                "{:%Y-%m-%d %H:%M:%S} Error: Data not found at page {:2}. Check log. \tURL: {}\n".format(
-                                    dt.datetime.now(),
-                                    page_id,
+                                "{:%Y-%m-%d %H:%M:%S} Error: Data not found at page {:2}. Check log. \tURL: {}\n"
+                                .format(
+                                    dt.datetime.now(), page_id,
                                     self._url_template.format(
-                                        self._query_val,
-                                        self._query_val,
+                                        self._query_val, self._query_val,
                                         page_id)))
                         except Exception as e:
                             print("\nLog ERROR: \t", e)
@@ -233,7 +226,9 @@ class WeiboScraper():
 def stable(query):
     print('Spider beginning...')
     log = open('./log/WeiboScraper{:_%m_%d_%H_%M}.log'.format(
-        dt.datetime.now()), 'a', encoding='utf-8')
+        dt.datetime.now()),
+               'a',
+               encoding='utf-8')
     weiboScraperBig = WeiboScraper(query, log)
     # while True:
     weiboScraperBig.catch_pages(1, 2, 0)

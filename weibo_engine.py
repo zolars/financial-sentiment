@@ -10,7 +10,9 @@ def weibo_engine(query):
     print('Scraper beginning...')
 
     log = open('./log/WeiboScraper{:_%m_%d_%H_%M}.log'.format(
-        dt.datetime.now()), 'a', encoding='utf-8')
+        dt.datetime.now()),
+               'a',
+               encoding='utf-8')
 
     executor = ThreadPoolExecutor(max_workers=8)
 

@@ -64,7 +64,8 @@ def changeScrapers():
     if op == 'getItems':
         request_item_type = request.args.get('item_type')
         result = {}
-        for (item_id, item_type, query) in zip(item_id_set, item_type_list, query_list):
+        for (item_id, item_type, query) in zip(item_id_set, item_type_list,
+                                               query_list):
             if item_type == request_item_type:
                 result[item_id] = query
         return json.dumps(result)

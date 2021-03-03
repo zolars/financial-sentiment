@@ -16,7 +16,7 @@ class MySQL:
             host='localhost',  # mysql server address
             port=3306,  # port num
             user='root',  # username
-            passwd='123456',  # password
+            passwd='root',  # password
             db='posts',
             charset='utf8mb4',
         )
@@ -54,8 +54,14 @@ class MySQL:
         amount_spike = (amount_hour - amount_avg) / amount_avg
         sentiment_spike = (sentiment_hour - sentiment_avg) / sentiment_avg
 
-        result = {'amount_hour': amount_hour, 'amount_avg': amount_avg,
-                  'amount_spike': amount_spike, 'sentiment_hour': sentiment_hour, 'sentiment_avg': sentiment_avg, 'sentiment_spike': sentiment_spike}
+        result = {
+            'amount_hour': amount_hour,
+            'amount_avg': amount_avg,
+            'amount_spike': amount_spike,
+            'sentiment_hour': sentiment_hour,
+            'sentiment_avg': sentiment_avg,
+            'sentiment_spike': sentiment_spike
+        }
         return result
 
 
@@ -63,8 +69,12 @@ def gen_crypto_data(item_id):
     result = MySQL(item_id).searchTweetsByHour()
     fsym = item_id.upper()
 
-    price_data = price.get_current_price(
-        fsym, 'USD', e='all', try_conversion=True, full=True, format='raw')[fsym]['USD']
+    price_data = price.get_current_price(fsym,
+                                         'USD',
+                                         e='all',
+                                         try_conversion=True,
+                                         full=True,
+                                         format='raw')[fsym]['USD']
     result['price'] = price_data['PRICE']
     result['coin_supply'] = price_data['SUPPLY']
     result['market_cap'] = price_data['MKTCAP']
@@ -74,48 +84,39 @@ def gen_crypto_data(item_id):
     result['high'] = 0
     result['low'] = float("inf")
     result['volume_sold'] = 0
-    for data in price.get_historical_data(
-            fsym, 'USD', 'minute', aggregate=10, limit=6):
-        result['high'] = data['high'] if data['high'] > result['high'] else result['high']
-        result['low'] = data['low'] if data['low'] < result['low'] else result['low']
+    for data in price.get_historical_data(fsym,
+                                          'USD',
+                                          'minute',
+                                          aggregate=10,
+                                          limit=6):
+        result['high'] = data[
+            'high'] if data['high'] > result['high'] else result['high']
+        result['low'] = data['low'] if data['low'] < result['low'] else result[
+            'low']
         result['volume_sold'] += data['volumeto']
 
     file_path = './out/' + fsym + '_crypto.xlsx'
     if not os.path.isfile(file_path):
         wb = Workbook()
         ws = wb.active
-        ws.append(['price',
-                   'high',
-                   'low',
-                   'volume_sold',
-                   'coin_supply',
-                   'market_cap',
-                   'velocity',
-                   'amount_hour',
-                   'amount_avg',
-                   'amount_spike',
-                   'sentiment_hour',
-                   'sentiment_avg',
-                   'sentiment_spike'])
+        ws.append([
+            'price', 'high', 'low', 'volume_sold', 'coin_supply', 'market_cap',
+            'velocity', 'amount_hour', 'amount_avg', 'amount_spike',
+            'sentiment_hour', 'sentiment_avg', 'sentiment_spike'
+        ])
         wb.save(file_path)
 
     else:
         wb = load_workbook(file_path)
         ws = wb.active
-    ws.append([time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-               result['price'],
-               result['high'],
-               result['low'],
-               result['volume_sold'],
-               result['coin_supply'],
-               result['market_cap'],
-               result['velocity'],
-               result['amount_hour'],
-               result['amount_avg'],
-               result['amount_spike'],
-               result['sentiment_hour'],
-               result['sentiment_avg'],
-               result['sentiment_spike']])
+    ws.append([
+        time.strftime("%Y-%m-%d %H:%M:%S",
+                      time.localtime()), result['price'], result['high'],
+        result['low'], result['volume_sold'], result['coin_supply'],
+        result['market_cap'], result['velocity'], result['amount_hour'],
+        result['amount_avg'], result['amount_spike'], result['sentiment_hour'],
+        result['sentiment_avg'], result['sentiment_spike']
+    ])
     wb.save(file_path)
     return result
 

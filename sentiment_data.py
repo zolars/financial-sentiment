@@ -18,7 +18,7 @@ class MySQL:
             host='localhost',  # mysql server address
             port=3306,  # port num
             user='root',  # username
-            passwd='123456',  # password
+            passwd='root',  # password
             db='posts',
             charset='utf8mb4',
         )
@@ -34,7 +34,7 @@ class MySQL:
         return df
 
     def searchSentiment(self):
-        sql = 'SELECT time, sentiment FROM ' + self._table   # + ' WHERE sentiment!=0'
+        sql = 'SELECT time, sentiment FROM ' + self._table  # + ' WHERE sentiment!=0'
         df = pd.read_sql(sql, con=self._conn)
         return df
 
@@ -50,36 +50,34 @@ def line_smooth(index, data, name) -> Line:
             theme=ThemeType.ROMANTIC,
             # width="100%",
             height="500px",
-        ))
-        .add_xaxis(index)
-        .add_yaxis("Sentiment value", data, is_smooth=True, is_connect_nones=True, yaxis_index=0)
-        .extend_axis(
-            yaxis=opts.AxisOpts(
+        )).add_xaxis(index).add_yaxis(
+            "Sentiment value",
+            data,
+            is_smooth=True,
+            is_connect_nones=True,
+            yaxis_index=0).extend_axis(yaxis=opts.AxisOpts(
                 name="Stock K-line",
                 is_scale=True,
                 position="right",
                 axisline_opts=opts.AxisLineOpts(
-                    linestyle_opts=opts.LineStyleOpts(color="#675bba")
-                ),
+                    linestyle_opts=opts.LineStyleOpts(color="#675bba")),
                 splitline_opts=opts.SplitLineOpts(
-                    is_show=True, linestyle_opts=opts.LineStyleOpts(opacity=1)
-                ),
-            )
-        )
-        .set_global_opts(
-            xaxis_opts=opts.AxisOpts(is_scale=True),
-            yaxis_opts=opts.AxisOpts(
-                name="Sentiment Value",
-                is_scale=True,
-                splitarea_opts=opts.SplitAreaOpts(
-                    is_show=True, areastyle_opts=opts.AreaStyleOpts(opacity=1))),
-            datazoom_opts=[opts.DataZoomOpts(pos_bottom="-2%")],
-            title_opts=opts.TitleOpts(title="Sentiment Analysis : " + name),
-            tooltip_opts=opts.TooltipOpts(
-                trigger="axis",
-                axis_pointer_type="line"),
-        )
-    )
+                    is_show=True, linestyle_opts=opts.LineStyleOpts(
+                        opacity=1)),
+            )).set_global_opts(
+                xaxis_opts=opts.AxisOpts(is_scale=True),
+                yaxis_opts=opts.AxisOpts(
+                    name="Sentiment Value",
+                    is_scale=True,
+                    splitarea_opts=opts.SplitAreaOpts(
+                        is_show=True,
+                        areastyle_opts=opts.AreaStyleOpts(opacity=1))),
+                datazoom_opts=[opts.DataZoomOpts(pos_bottom="-2%")],
+                title_opts=opts.TitleOpts(title="Sentiment Analysis : " +
+                                          name),
+                tooltip_opts=opts.TooltipOpts(trigger="axis",
+                                              axis_pointer_type="line"),
+            ))
     return c
 
 
@@ -94,7 +92,8 @@ def gen_sentiment_chart(item_id):
     for i in df.index.tolist():
         index.append("{:%Y-%m-%d}".format(i.to_pydatetime()))
     sentiment_data = line_smooth(index, data, item_id)
-    return sentiment_data, df.index[0].to_pydatetime(), df.index[-1].to_pydatetime()
+    return sentiment_data, df.index[0].to_pydatetime(
+    ), df.index[-1].to_pydatetime()
 
 
 def out_sentiment_excel(item_id):
